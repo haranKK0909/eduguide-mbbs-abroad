@@ -1,0 +1,1805 @@
+/* =========================================================
+   COUNTRIES PAGE
+   Premium Animated World Map
+========================================================= */
+
+.countries-page {
+  position: relative;
+  overflow: hidden;
+  background: #f7f9fc;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.countries-hero {
+  position: relative;
+  min-height: calc(100vh - 82px);
+
+  overflow: hidden;
+
+  color: #fff;
+
+  background:
+    radial-gradient(
+      circle at 78% 48%,
+      rgba(28, 78, 139, 0.34),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 95% 5%,
+      rgba(242, 200, 91, 0.08),
+      transparent 25%
+    ),
+    linear-gradient(
+      135deg,
+      #020d22 0%,
+      #061936 48%,
+      #0a2b58 100%
+    );
+}
+
+
+/* =========================================================
+   HERO BACKGROUND
+========================================================= */
+
+.countries-hero-bg {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 75px 75px;
+
+  mask-image:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.8),
+      transparent 95%
+    );
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   HERO GLOWS
+========================================================= */
+
+.countries-hero-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(30px);
+}
+
+.countries-glow-one {
+  width: 650px;
+  height: 650px;
+
+  right: -120px;
+  top: 8%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(26, 86, 155, 0.24),
+      transparent 70%
+    );
+
+  animation:
+    countriesGlow 6s ease-in-out infinite;
+}
+
+.countries-glow-two {
+  width: 400px;
+  height: 400px;
+
+  left: -220px;
+  bottom: -180px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(242, 200, 91, 0.09),
+      transparent 70%
+    );
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.country-particle {
+  position: absolute;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #f2c85b;
+
+  box-shadow:
+    0 0 14px rgba(242, 200, 91, 0.6);
+
+  animation:
+    countryParticle 5s ease-in-out infinite;
+}
+
+.particle-a {
+  left: 37%;
+  top: 20%;
+}
+
+.particle-b {
+  left: 61%;
+  top: 17%;
+
+  animation-delay: -1s;
+}
+
+.particle-c {
+  left: 53%;
+  top: 72%;
+
+  animation-delay: -2s;
+}
+
+.particle-d {
+  right: 9%;
+  top: 38%;
+
+  animation-delay: -3s;
+}
+
+.particle-e {
+  right: 22%;
+  bottom: 13%;
+
+  animation-delay: -4s;
+}
+
+
+/* =========================================================
+   HERO CONTAINER
+========================================================= */
+
+.countries-hero-container {
+  min-height: calc(100vh - 82px);
+
+  display: grid;
+
+  grid-template-columns:
+    0.85fr 1.15fr;
+
+  align-items: center;
+
+  gap: 15px;
+
+  position: relative;
+
+  z-index: 3;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.countries-hero-content {
+  position: relative;
+
+  z-index: 5;
+
+  padding: 70px 0;
+}
+
+
+/* =========================================================
+   EYEBROW
+========================================================= */
+
+.countries-eyebrow {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 9px 15px;
+
+  border-radius: 999px;
+
+  border:
+    1px solid rgba(242, 200, 91, 0.28);
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  color: #f2c85b;
+
+  font-size: 11px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.7px;
+
+  margin-bottom: 27px;
+}
+
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
+
+.countries-hero h1 {
+  margin: 0;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size:
+    clamp(48px, 5vw, 76px);
+
+  line-height: 0.98;
+
+  letter-spacing: -3px;
+
+  font-weight: 600;
+
+  color: #fff;
+}
+
+.countries-hero h1 span {
+  display: inline-block;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff1a6,
+      #f2c85b 45%,
+      #d9a83f
+    );
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* =========================================================
+   HERO DESCRIPTION
+========================================================= */
+
+.countries-hero-description {
+  max-width: 530px;
+
+  margin: 23px 0 0;
+
+  color: #aebbd0;
+
+  font-size: 14px;
+
+  line-height: 1.9;
+}
+
+
+/* =========================================================
+   HERO ACTIONS
+========================================================= */
+
+.countries-hero-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-top: 30px;
+}
+
+.countries-primary-btn,
+.countries-secondary-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+
+.countries-primary-btn {
+  padding: 14px 21px;
+
+  border-radius: 999px;
+
+  color: #071a3a;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f7d36b,
+      #d9a83f
+    );
+
+  font-size: 12px;
+
+  font-weight: 900;
+
+  box-shadow:
+    0 15px 35px rgba(217, 168, 63, 0.2);
+}
+
+.countries-primary-btn:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 20px 40px rgba(217, 168, 63, 0.32);
+}
+
+.countries-secondary-btn {
+  padding: 13px 19px;
+
+  border-radius: 999px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.15);
+
+  color: #dce4f0;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+.countries-secondary-btn:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(242, 200, 91, 0.3);
+
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+
+/* =========================================================
+   QUICK STATS
+========================================================= */
+
+.countries-quick-stats {
+  display: flex;
+
+  gap: 0;
+
+  margin-top: 43px;
+
+  max-width: 550px;
+}
+
+.countries-quick-stats div {
+  padding-right: 27px;
+
+  margin-right: 27px;
+}
+
+.countries-quick-stats div + div {
+  border-left:
+    1px solid rgba(255, 255, 255, 0.1);
+
+  padding-left: 27px;
+}
+
+.countries-quick-stats strong {
+  display: block;
+
+  color: #f2c85b;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size: 25px;
+
+  line-height: 1;
+}
+
+.countries-quick-stats span {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #71839d;
+
+  font-size: 9px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.1px;
+}
+
+
+/* =========================================================
+   WORLD MAP AREA
+========================================================= */
+
+.countries-map-area {
+  min-height: 680px;
+
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+
+/* =========================================================
+   WORLD MAP WRAPPER
+========================================================= */
+
+.world-map-wrapper {
+  position: relative;
+
+  width: 100%;
+
+  max-width: 800px;
+
+  height: 620px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+
+/* =========================================================
+   MAP GLOW
+========================================================= */
+
+.world-map-glow {
+  position: absolute;
+
+  width: 570px;
+  height: 570px;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(31, 94, 165, 0.28),
+      rgba(8, 36, 75, 0.1) 48%,
+      transparent 72%
+    );
+
+  filter: blur(18px);
+
+  animation:
+    worldGlow 5s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   MAP GRID
+========================================================= */
+
+.world-map-grid {
+  position: absolute;
+
+  inset: 8%;
+
+  border-radius: 50%;
+
+  background-image:
+    linear-gradient(
+      rgba(242, 200, 91, 0.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(242, 200, 91, 0.045) 1px,
+      transparent 1px
+    );
+
+  background-size: 40px 40px;
+
+  mask-image:
+    radial-gradient(
+      circle,
+      black 10%,
+      transparent 72%
+    );
+
+  pointer-events: none;
+
+  animation:
+    mapGridMove 18s linear infinite;
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+.world-map {
+  position: relative;
+
+  width: 100%;
+
+  height: 100%;
+
+  z-index: 3;
+
+  overflow: visible;
+}
+
+
+/* =========================================================
+   COUNTRY HOVER
+========================================================= */
+
+.map-country {
+  transition:
+    fill 0.3s ease,
+    stroke 0.3s ease;
+}
+
+
+/* =========================================================
+   TRAVEL ROUTES
+========================================================= */
+
+.travel-route {
+  stroke-dasharray: 4 4;
+
+  opacity: 0.62;
+
+  animation:
+    routeTravel 3.5s linear infinite;
+}
+
+
+/* =========================================================
+   INDIA MARKER
+========================================================= */
+
+.india-core {
+  filter:
+    drop-shadow(
+      0 0 7px rgba(242, 200, 91, 0.9)
+    );
+}
+
+.india-pulse {
+  animation:
+    mapPulse 2s ease-out infinite;
+}
+
+.india-pulse-two {
+  animation:
+    mapPulse 2s ease-out infinite;
+
+  animation-delay: 0.6s;
+}
+
+
+/* =========================================================
+   DESTINATION MARKERS
+========================================================= */
+
+.destination-core {
+  filter:
+    drop-shadow(
+      0 0 8px rgba(242, 200, 91, 0.95)
+    );
+}
+
+.destination-pulse {
+  animation:
+    destinationPulse 2.4s ease-out infinite;
+}
+
+.destination-pulse-two {
+  animation:
+    destinationPulse 2.4s ease-out infinite;
+
+  animation-delay: 0.7s;
+}
+
+
+/* =========================================================
+   FLOATING MAP LABELS
+========================================================= */
+
+.map-floating-label {
+  position: absolute;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 180px;
+
+  padding: 12px 14px;
+
+  border-radius: 14px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.14);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 38, 73, 0.94),
+      rgba(3, 17, 37, 0.92)
+    );
+
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.24);
+
+  z-index: 7;
+
+  animation:
+    mapLabelFloat 4.5s ease-in-out infinite;
+}
+
+.map-floating-label svg {
+  color: #f2c85b;
+
+  flex: 0 0 auto;
+}
+
+.map-floating-label strong {
+  display: block;
+
+  color: #fff;
+
+  font-size: 11px;
+}
+
+.map-floating-label span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8294ae;
+
+  font-size: 8px;
+}
+
+.map-label-one {
+  left: 3%;
+  top: 22%;
+}
+
+.map-label-two {
+  right: 3%;
+  top: 9%;
+
+  animation-delay: -1.5s;
+}
+
+.map-label-three {
+  right: 0;
+  bottom: 18%;
+
+  animation-delay: -3s;
+}
+
+
+/* =========================================================
+   MAP LEGEND
+========================================================= */
+
+.map-legend {
+  position: absolute;
+
+  left: 50%;
+  bottom: 5%;
+
+  transform: translateX(-50%);
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #7f91aa;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.7px;
+
+  z-index: 6;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #f2c85b;
+
+  box-shadow:
+    0 0 10px rgba(242, 200, 91, 0.75);
+}
+
+
+/* =========================================================
+   COUNTRIES SECTION
+========================================================= */
+
+.countries-section {
+  position: relative;
+
+  background:
+    radial-gradient(
+      circle at 5% 10%,
+      rgba(242, 200, 91, 0.05),
+      transparent 25%
+    ),
+    #fff;
+}
+
+.country-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 22px;
+
+  margin-top: 50px;
+}
+
+
+/* =========================================================
+   DIFFERENCE SECTION
+========================================================= */
+
+.country-difference-section {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 105px 0;
+
+  color: #fff;
+
+  background:
+    radial-gradient(
+      circle at 85% 25%,
+      rgba(242, 200, 91, 0.1),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      #04122b,
+      #08264d 55%,
+      #0b315f
+    );
+}
+
+.country-difference-glow {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  right: -220px;
+  bottom: -250px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(242, 200, 91, 0.13),
+      transparent 70%
+    );
+
+  filter: blur(20px);
+}
+
+.country-difference-grid {
+  position: relative;
+
+  z-index: 2;
+
+  display: grid;
+
+  grid-template-columns:
+    0.9fr 1.1fr;
+
+  gap: 75px;
+
+  align-items: center;
+}
+
+.country-dark-label {
+  color: #f2c85b;
+}
+
+.country-difference-content h2 {
+  margin: 15px 0 20px;
+
+  max-width: 600px;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size:
+    clamp(38px, 4vw, 56px);
+
+  line-height: 1.08;
+
+  letter-spacing: -1.5px;
+}
+
+.country-difference-content h2 span {
+  display: block;
+
+  color: #f2c85b;
+}
+
+.country-difference-content p {
+  max-width: 550px;
+
+  margin: 0;
+
+  color: #9eafc5;
+
+  font-size: 14px;
+
+  line-height: 1.9;
+}
+
+
+/* =========================================================
+   DIFFERENCE BUTTON
+========================================================= */
+
+.difference-button {
+  margin-top: 30px;
+}
+
+.difference-button a {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 13px 20px;
+
+  border-radius: 999px;
+
+  color: #071a3a;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f7d36b,
+      #d9a83f
+    );
+
+  text-decoration: none;
+
+  font-size: 12px;
+
+  font-weight: 900;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.difference-button a:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 15px 35px rgba(217, 168, 63, 0.3);
+}
+
+
+/* =========================================================
+   FACTORS
+========================================================= */
+
+.country-factors {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 15px;
+}
+
+.country-factor-card {
+  min-height: 170px;
+
+  padding: 23px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 15px;
+
+  border-radius: 20px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.09);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  backdrop-filter: blur(12px);
+
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+}
+
+.country-factor-card:hover {
+  transform: translateY(-7px);
+
+  border-color:
+    rgba(242, 200, 91, 0.3);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.11),
+      rgba(255, 255, 255, 0.04)
+    );
+}
+
+.factor-icon {
+  width: 45px;
+  height: 45px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 13px;
+
+  color: #f2c85b;
+
+  background:
+    rgba(242, 200, 91, 0.08);
+
+  border:
+    1px solid rgba(242, 200, 91, 0.18);
+}
+
+.country-factor-card strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #fff;
+
+  font-size: 14px;
+}
+
+.country-factor-card span {
+  display: block;
+
+  margin-top: 8px;
+
+  color: #91a3bc;
+
+  font-size: 11px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   GLOBAL JOURNEY
+========================================================= */
+
+.global-journey-section {
+  padding: 95px 0;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(217, 168, 63, 0.1),
+      transparent 35%
+    ),
+    #f6f8fc;
+}
+
+.global-journey-card {
+  position: relative;
+
+  overflow: hidden;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 30px;
+
+  padding: 42px 48px;
+
+  border-radius: 28px;
+
+  border:
+    1px solid rgba(7, 26, 58, 0.08);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f4f7fb
+    );
+
+  box-shadow:
+    0 25px 60px rgba(7, 26, 58, 0.08);
+}
+
+.journey-icon {
+  width: 72px;
+  height: 72px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 21px;
+
+  color: #f2c85b;
+
+  background:
+    linear-gradient(
+      145deg,
+      #071a3a,
+      #123d72
+    );
+
+  box-shadow:
+    0 15px 30px rgba(7, 26, 58, 0.16);
+
+  z-index: 2;
+}
+
+.journey-content {
+  position: relative;
+
+  z-index: 2;
+
+  flex: 1;
+}
+
+.journey-content > span {
+  color: #c3922e;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.7px;
+}
+
+.journey-content h2 {
+  margin: 8px 0 9px;
+
+  color: #0a203e;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size:
+    clamp(30px, 3vw, 43px);
+
+  line-height: 1.05;
+}
+
+.journey-content h2 strong {
+  color: #d9a83f;
+
+  font-weight: 600;
+
+  margin-left: 7px;
+}
+
+.journey-content p {
+  max-width: 600px;
+
+  margin: 0;
+
+  color: #6e7b8e;
+
+  font-size: 12px;
+
+  line-height: 1.8;
+}
+
+.journey-button {
+  position: relative;
+
+  z-index: 2;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex: 0 0 auto;
+
+  padding: 13px 19px;
+
+  border-radius: 999px;
+
+  color: #071a3a;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f7d36b,
+      #d9a83f
+    );
+
+  text-decoration: none;
+
+  font-size: 11px;
+
+  font-weight: 900;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.journey-button:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 15px 30px rgba(217, 168, 63, 0.25);
+}
+
+
+/* =========================================================
+   JOURNEY ORBITS
+========================================================= */
+
+.journey-orbit {
+  position: absolute;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(217, 168, 63, 0.14);
+
+  pointer-events: none;
+}
+
+.orbit-one {
+  width: 420px;
+  height: 420px;
+
+  right: -140px;
+  top: -180px;
+
+  animation:
+    journeyRotate 18s linear infinite;
+}
+
+.orbit-two {
+  width: 290px;
+  height: 290px;
+
+  right: -60px;
+  bottom: -180px;
+
+  border-color:
+    rgba(7, 26, 58, 0.08);
+
+  animation:
+    journeyRotateReverse 14s linear infinite;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes countriesGlow {
+
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+
+@keyframes worldGlow {
+
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.94);
+
+    opacity: 0.65;
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      scale(1.08);
+
+    opacity: 1;
+  }
+}
+
+
+@keyframes mapGridMove {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@keyframes routeTravel {
+
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -35;
+  }
+}
+
+
+@keyframes mapPulse {
+
+  0% {
+    opacity: 0.9;
+
+    transform:
+      scale(0.5);
+  }
+
+  70% {
+    opacity: 0;
+
+    transform:
+      scale(2.3);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      scale(2.5);
+  }
+}
+
+
+@keyframes destinationPulse {
+
+  0% {
+    opacity: 0.8;
+
+    transform:
+      scale(0.55);
+  }
+
+  70% {
+    opacity: 0;
+
+    transform:
+      scale(2);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      scale(2.2);
+  }
+}
+
+
+@keyframes mapLabelFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+
+@keyframes countryParticle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: translateY(-18px);
+
+    opacity: 1;
+  }
+}
+
+
+@keyframes journeyRotate {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@keyframes journeyRotateReverse {
+
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1150px) {
+
+  .countries-hero-container {
+    grid-template-columns:
+      0.9fr 1.1fr;
+  }
+
+  .countries-hero h1 {
+    font-size: 57px;
+  }
+
+  .world-map-wrapper {
+    transform: scale(0.9);
+  }
+
+  .country-difference-grid {
+    gap: 40px;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .countries-hero {
+    min-height: auto;
+  }
+
+  .countries-hero-container {
+    grid-template-columns: 1fr;
+
+    min-height: auto;
+  }
+
+  .countries-hero-content {
+    padding:
+      80px 0 20px;
+
+    text-align: center;
+  }
+
+  .countries-hero-description {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .countries-hero-actions {
+    justify-content: center;
+  }
+
+  .countries-quick-stats {
+    margin-left: auto;
+    margin-right: auto;
+
+    justify-content: center;
+
+    text-align: left;
+  }
+
+  .countries-map-area {
+    min-height: 590px;
+  }
+
+  .world-map-wrapper {
+    height: 570px;
+
+    transform: scale(0.9);
+  }
+
+  .country-difference-grid {
+    grid-template-columns: 1fr;
+
+    gap: 45px;
+  }
+
+  .country-difference-content {
+    text-align: center;
+  }
+
+  .country-difference-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .country-factors {
+    max-width: 720px;
+
+    margin: auto;
+  }
+
+  .global-journey-card {
+    flex-wrap: wrap;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+  .countries-hero-content {
+    padding-top: 65px;
+  }
+
+  .countries-hero h1 {
+    font-size: 44px;
+
+    letter-spacing: -2px;
+  }
+
+  .countries-hero-description {
+    font-size: 13px;
+
+    line-height: 1.8;
+  }
+
+  .countries-hero-actions {
+    flex-direction: column;
+  }
+
+  .countries-primary-btn,
+  .countries-secondary-btn {
+    width: 100%;
+  }
+
+  .countries-quick-stats {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+  .countries-quick-stats div {
+    padding-right: 12px;
+
+    margin-right: 12px;
+  }
+
+  .countries-quick-stats div + div {
+    padding-left: 12px;
+  }
+
+  .countries-quick-stats strong {
+    font-size: 21px;
+  }
+
+  .countries-quick-stats span {
+    font-size: 7px;
+  }
+
+
+  /* MAP */
+
+  .countries-map-area {
+    min-height: 430px;
+  }
+
+  .world-map-wrapper {
+    height: 430px;
+
+    transform: scale(1);
+  }
+
+  .world-map-glow {
+    width: 330px;
+    height: 330px;
+  }
+
+  .world-map-grid {
+    inset: 8%;
+  }
+
+
+  /* Floating labels */
+
+  .map-floating-label {
+    min-width: 125px;
+
+    padding: 8px 9px;
+
+    gap: 7px;
+
+    border-radius: 10px;
+  }
+
+  .map-floating-label svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .map-floating-label strong {
+    font-size: 9px;
+  }
+
+  .map-floating-label span {
+    font-size: 7px;
+  }
+
+  .map-label-one {
+    left: 0;
+    top: 21%;
+  }
+
+  .map-label-two {
+    right: 0;
+    top: 10%;
+  }
+
+  .map-label-three {
+    right: 0;
+    bottom: 19%;
+  }
+
+  .map-legend {
+    bottom: 3%;
+
+    font-size: 7px;
+  }
+
+
+  /* Country cards */
+
+  .country-grid {
+    grid-template-columns: 1fr;
+
+    gap: 17px;
+
+    margin-top: 35px;
+  }
+
+
+  /* Difference */
+
+  .country-difference-section {
+    padding: 80px 0;
+  }
+
+  .country-difference-content h2 {
+    font-size: 39px;
+  }
+
+  .country-factors {
+    grid-template-columns: 1fr;
+  }
+
+  .country-factor-card {
+    min-height: auto;
+
+    padding: 20px;
+  }
+
+
+  /* Journey */
+
+  .global-journey-section {
+    padding: 70px 0;
+  }
+
+  .global-journey-card {
+    padding: 30px 23px;
+
+    align-items: flex-start;
+
+    gap: 20px;
+  }
+
+  .journey-icon {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 16px;
+  }
+
+  .journey-content {
+    width: calc(100% - 75px);
+  }
+
+  .journey-content h2 {
+    font-size: 28px;
+  }
+
+  .journey-content h2 strong {
+    display: block;
+
+    margin-left: 0;
+
+    margin-top: 3px;
+  }
+
+  .journey-content p {
+    font-size: 11px;
+  }
+
+  .journey-button {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+  .countries-hero h1 {
+    font-size: 39px;
+  }
+
+  .countries-map-area {
+    min-height: 370px;
+  }
+
+  .world-map-wrapper {
+    height: 370px;
+  }
+
+  .map-floating-label {
+    transform: scale(0.88);
+  }
+
+  .map-label-one {
+    left: -10px;
+  }
+
+  .map-label-two {
+    right: -10px;
+  }
+
+  .map-label-three {
+    right: -15px;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .countries-page *,
+  .countries-page *::before,
+  .countries-page *::after {
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+  }
+
+}

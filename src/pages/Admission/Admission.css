@@ -1,0 +1,1956 @@
+/* =========================================================
+   ADMISSION PROCESS PAGE
+   Premium / Professional / Timeline Design
+========================================================= */
+
+.admission-page {
+  position: relative;
+  overflow: hidden;
+  background: #f7f9fc;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.admission-hero {
+  min-height: calc(100vh - 82px);
+
+  position: relative;
+  overflow: hidden;
+
+  color: #fff;
+
+  background:
+    radial-gradient(
+      circle at 76% 50%,
+      rgba(25, 88, 158, 0.38),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 8% 90%,
+      rgba(242, 200, 91, 0.08),
+      transparent 25%
+    ),
+    linear-gradient(
+      135deg,
+      #020d22 0%,
+      #061936 48%,
+      #0a2b58 100%
+    );
+}
+
+
+/* =========================================================
+   HERO GRID
+========================================================= */
+
+.admission-hero-grid {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 75px 75px;
+
+  mask-image:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.85),
+      transparent 95%
+    );
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   HERO GLOW
+========================================================= */
+
+.admission-hero-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(25px);
+}
+
+.admission-glow-one {
+  width: 550px;
+  height: 550px;
+
+  right: -100px;
+  top: 5%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(31, 102, 181, 0.25),
+      transparent 70%
+    );
+}
+
+.admission-glow-two {
+  width: 360px;
+  height: 360px;
+
+  left: -180px;
+  bottom: -150px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(242, 200, 91, 0.09),
+      transparent 70%
+    );
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.admission-particle {
+  position: absolute;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: rgba(242, 200, 91, 0.7);
+
+  box-shadow:
+    0 0 15px rgba(242, 200, 91, 0.45);
+
+  animation:
+    admissionParticleFloat 5s ease-in-out infinite;
+}
+
+.admission-particle-one {
+  top: 20%;
+  left: 48%;
+}
+
+.admission-particle-two {
+  top: 70%;
+  left: 55%;
+
+  animation-delay: -1.8s;
+}
+
+.admission-particle-three {
+  top: 35%;
+  right: 8%;
+
+  animation-delay: -3s;
+}
+
+
+/* =========================================================
+   HERO INNER
+========================================================= */
+
+.admission-hero-inner {
+  min-height: calc(100vh - 82px);
+
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+
+  grid-template-columns:
+    0.95fr 1.05fr;
+
+  align-items: center;
+
+  gap: 30px;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.admission-hero-content {
+  padding: 75px 0;
+}
+
+
+/* =========================================================
+   EYEBROW
+========================================================= */
+
+.admission-eyebrow {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 15px;
+
+  border-radius: 999px;
+
+  border:
+    1px solid rgba(242, 200, 91, 0.25);
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  color: #f2c85b;
+
+  font-size: 11px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.8px;
+
+  margin-bottom: 27px;
+}
+
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
+
+.admission-hero h1 {
+  margin: 0;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size:
+    clamp(54px, 5.3vw, 84px);
+
+  line-height: 0.98;
+
+  letter-spacing: -3px;
+
+  font-weight: 600;
+}
+
+.admission-hero h1 span {
+  display: inline-block;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff1a6,
+      #f2c85b 45%,
+      #d9a83f
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* =========================================================
+   TAGLINE
+========================================================= */
+
+.admission-tagline {
+  margin-top: 20px;
+
+  color: #f2c85b;
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   HERO DESCRIPTION
+========================================================= */
+
+.admission-hero-content > p {
+  max-width: 600px;
+
+  margin: 20px 0 0;
+
+  color: #aebbd0;
+
+  font-size: 15px;
+
+  line-height: 1.9;
+}
+
+
+/* =========================================================
+   HERO BUTTONS
+========================================================= */
+
+.admission-hero-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin-top: 30px;
+}
+
+.admission-primary-btn,
+.admission-secondary-btn {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.admission-primary-btn {
+  gap: 10px;
+
+  padding: 15px 22px;
+
+  border-radius: 999px;
+
+  color: #071a3a;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f7d36b,
+      #d9a83f
+    );
+
+  font-size: 13px;
+
+  font-weight: 900;
+
+  box-shadow:
+    0 15px 35px rgba(217, 168, 63, 0.22);
+}
+
+.admission-primary-btn:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 20px 40px rgba(217, 168, 63, 0.35);
+}
+
+.admission-primary-btn svg {
+  transition:
+    transform 0.3s ease;
+}
+
+.admission-primary-btn:hover svg {
+  transform: translateX(4px);
+}
+
+.admission-secondary-btn {
+  padding: 14px 20px;
+
+  border-radius: 999px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.15);
+
+  color: #dce4f0;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+.admission-secondary-btn:hover {
+  transform: translateY(-3px);
+
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  border-color:
+    rgba(242, 200, 91, 0.3);
+}
+
+
+/* =========================================================
+   HERO TRUST
+========================================================= */
+
+.admission-hero-trust {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 18px;
+
+  margin-top: 38px;
+}
+
+.admission-hero-trust div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #92a4bd;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+.admission-hero-trust svg {
+  color: #f2c85b;
+}
+
+
+/* =========================================================
+   HERO JOURNEY VISUAL
+========================================================= */
+
+.admission-hero-visual {
+  width: 620px;
+  height: 620px;
+
+  max-width: 100%;
+
+  position: relative;
+
+  margin: auto;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  perspective: 1000px;
+}
+
+
+/* =========================================================
+   JOURNEY ORBITS
+========================================================= */
+
+.journey-orbit {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(242, 200, 91, 0.22);
+
+  transform-style: preserve-3d;
+
+  pointer-events: none;
+}
+
+.orbit-one {
+  width: 410px;
+  height: 410px;
+
+  transform:
+    translate(-50%, -50%)
+    rotateX(70deg)
+    rotateZ(-15deg);
+
+  animation:
+    journeyOrbitOne 16s linear infinite;
+}
+
+.orbit-two {
+  width: 485px;
+  height: 485px;
+
+  transform:
+    translate(-50%, -50%)
+    rotateX(68deg)
+    rotateY(25deg)
+    rotateZ(20deg);
+
+  border-color:
+    rgba(255, 255, 255, 0.1);
+
+  animation:
+    journeyOrbitTwo 20s linear infinite;
+}
+
+.orbit-three {
+  width: 330px;
+  height: 330px;
+
+  transform:
+    translate(-50%, -50%)
+    rotateX(65deg)
+    rotateY(-25deg)
+    rotateZ(-20deg);
+
+  border-color:
+    rgba(242, 200, 91, 0.15);
+
+  animation:
+    journeyOrbitThree 13s linear infinite reverse;
+}
+
+
+/* =========================================================
+   JOURNEY CENTER
+========================================================= */
+
+.journey-center {
+  width: 205px;
+  height: 205px;
+
+  position: relative;
+  z-index: 5;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #174c86,
+      #082653 50%,
+      #031126 100%
+    );
+
+  border:
+    2px solid rgba(242, 200, 91, 0.5);
+
+  box-shadow:
+    0 0 70px rgba(24, 91, 163, 0.35),
+    0 0 30px rgba(242, 200, 91, 0.13),
+    inset 0 0 45px rgba(255, 255, 255, 0.06);
+
+  animation:
+    journeyCenterFloat 4s ease-in-out infinite;
+}
+
+.journey-center::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 12px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(242, 200, 91, 0.25);
+}
+
+.journey-center::after {
+  content: "";
+
+  position: absolute;
+
+  inset: -22px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(242, 200, 91, 0.12),
+      transparent 68%
+    );
+
+  filter: blur(10px);
+
+  z-index: -1;
+}
+
+.journey-center-inner {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 3px;
+
+  color: #fff;
+}
+
+.journey-center-inner svg {
+  color: #f2c85b;
+
+  margin-bottom: 5px;
+}
+
+.journey-center-inner strong {
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size: 28px;
+
+  line-height: 1;
+}
+
+.journey-center-inner span {
+  color: #91a5c1;
+
+  font-size: 9px;
+
+  font-weight: 900;
+
+  letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   JOURNEY NODES
+========================================================= */
+
+.journey-node {
+  position: absolute;
+
+  z-index: 7;
+
+  min-width: 92px;
+
+  padding: 10px 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border-radius: 999px;
+
+  border:
+    1px solid rgba(242, 200, 91, 0.2);
+
+  background:
+    rgba(7, 25, 53, 0.88);
+
+  backdrop-filter: blur(15px);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.25);
+
+  color: #d9e1ed;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  animation:
+    journeyNodeFloat 4s ease-in-out infinite;
+}
+
+.journey-node svg {
+  color: #f2c85b;
+}
+
+.node-one {
+  top: 10%;
+  left: 42%;
+}
+
+.node-two {
+  top: 27%;
+  right: 2%;
+
+  animation-delay: -1s;
+}
+
+.node-three {
+  bottom: 22%;
+  right: 3%;
+
+  animation-delay: -2s;
+}
+
+.node-four {
+  bottom: 7%;
+  left: 40%;
+
+  animation-delay: -3s;
+}
+
+.node-five {
+  bottom: 24%;
+  left: 1%;
+
+  animation-delay: -1.5s;
+}
+
+
+/* =========================================================
+   PROCESS SECTION
+========================================================= */
+
+.admission-process-section {
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 8% 20%,
+      rgba(217, 168, 63, 0.07),
+      transparent 25%
+    ),
+    #f7f9fc;
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+.admission-timeline {
+  position: relative;
+
+  max-width: 1050px;
+
+  margin: 70px auto 0;
+
+  padding-bottom: 20px;
+}
+
+.timeline-line {
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+
+  left: 50%;
+
+  width: 1px;
+
+  transform: translateX(-50%);
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(217, 168, 63, 0.4) 8%,
+      rgba(217, 168, 63, 0.4) 92%,
+      transparent
+    );
+}
+
+
+/* =========================================================
+   STEP
+========================================================= */
+
+.admission-step {
+  width: 100%;
+
+  position: relative;
+
+  min-height: 185px;
+
+  display: flex;
+
+  align-items: center;
+}
+
+.step-left {
+  justify-content: flex-start;
+
+  padding-right: calc(50% + 45px);
+}
+
+.step-right {
+  justify-content: flex-end;
+
+  padding-left: calc(50% + 45px);
+}
+
+
+/* =========================================================
+   STEP NUMBER
+========================================================= */
+
+.step-number {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  width: 45px;
+  height: 45px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #071a3a,
+      #123d72
+    );
+
+  border:
+    2px solid #f2c85b;
+
+  color: #f2c85b;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  box-shadow:
+    0 0 0 7px #f7f9fc,
+    0 10px 25px rgba(7, 26, 58, 0.12);
+
+  z-index: 4;
+}
+
+
+/* =========================================================
+   STEP CARD
+========================================================= */
+
+.step-card {
+  width: 100%;
+
+  display: flex;
+
+  gap: 17px;
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+  border:
+    1px solid rgba(7, 26, 58, 0.07);
+
+  background:
+    rgba(255, 255, 255, 0.86);
+
+  box-shadow:
+    0 15px 40px rgba(7, 26, 58, 0.055);
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+
+  border-color:
+    rgba(217, 168, 63, 0.3);
+
+  box-shadow:
+    0 22px 50px rgba(7, 26, 58, 0.1);
+}
+
+.step-icon {
+  width: 48px;
+  height: 48px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  color: #d9a83f;
+
+  background:
+    rgba(217, 168, 63, 0.09);
+
+  border:
+    1px solid rgba(217, 168, 63, 0.18);
+}
+
+.step-small {
+  color: #d9a83f;
+
+  font-size: 9px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.5px;
+}
+
+.step-card h3 {
+  margin: 6px 0 8px;
+
+  color: #10233f;
+
+  font-size: 17px;
+}
+
+.step-card p {
+  margin: 0;
+
+  color: #687386;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   DOCUMENTS
+========================================================= */
+
+.admission-documents-section {
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #061633,
+      #0a2247 52%,
+      #0c2d5a
+    );
+
+  color: #fff;
+}
+
+.admission-documents-section::before {
+  content: "";
+
+  position: absolute;
+
+  width: 550px;
+  height: 550px;
+
+  right: -220px;
+  top: -280px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(242, 200, 91, 0.11),
+      transparent 70%
+    );
+
+  filter: blur(15px);
+}
+
+.admission-documents-grid {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+
+  grid-template-columns:
+    0.9fr 1.1fr;
+
+  gap: 80px;
+
+  align-items: center;
+}
+
+
+/* =========================================================
+   DOCUMENT CONTENT
+========================================================= */
+
+.documents-content .section-label {
+  color: #f2c85b;
+}
+
+.documents-content h2 {
+  margin: 15px 0 20px;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size:
+    clamp(38px, 4vw, 56px);
+
+  line-height: 1.08;
+
+  letter-spacing: -1.5px;
+}
+
+.documents-content h2 span {
+  color: #f2c85b;
+}
+
+.documents-content > p {
+  max-width: 560px;
+
+  margin: 0;
+
+  color: #9cacc2;
+
+  font-size: 14px;
+
+  line-height: 1.85;
+}
+
+
+/* =========================================================
+   DOCUMENT NOTE
+========================================================= */
+
+.documents-note {
+  display: flex;
+
+  gap: 12px;
+
+  max-width: 500px;
+
+  margin-top: 32px;
+
+  padding: 17px;
+
+  border-radius: 16px;
+
+  border:
+    1px solid rgba(242, 200, 91, 0.14);
+
+  background:
+    rgba(255, 255, 255, 0.04);
+}
+
+.documents-note svg {
+  flex: 0 0 auto;
+
+  color: #f2c85b;
+}
+
+.documents-note strong {
+  display: block;
+
+  color: #fff;
+
+  font-size: 12px;
+
+  margin-bottom: 5px;
+}
+
+.documents-note span {
+  display: block;
+
+  color: #8294ae;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   DOCUMENT CARD
+========================================================= */
+
+.documents-card {
+  padding: 30px;
+
+  border-radius: 25px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.1);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.035)
+    );
+
+  backdrop-filter: blur(15px);
+
+  box-shadow:
+    0 25px 65px rgba(0, 0, 0, 0.2);
+}
+
+.documents-card-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding-bottom: 22px;
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, 0.08);
+}
+
+.documents-card-icon {
+  width: 48px;
+  height: 48px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  color: #f2c85b;
+
+  background:
+    rgba(242, 200, 91, 0.09);
+
+  border:
+    1px solid rgba(242, 200, 91, 0.18);
+}
+
+.documents-card-header strong {
+  display: block;
+
+  color: #fff;
+
+  font-size: 15px;
+
+  margin-bottom: 4px;
+}
+
+.documents-card-header span {
+  color: #8294ae;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   DOCUMENT LIST
+========================================================= */
+
+.documents-list {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 11px;
+
+  margin-top: 22px;
+}
+
+.document-item {
+  min-height: 62px;
+
+  display: grid;
+
+  grid-template-columns:
+    27px 18px 1fr;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 11px 13px;
+
+  border-radius: 13px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.07);
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+
+.document-item:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(242, 200, 91, 0.22);
+
+  background:
+    rgba(255, 255, 255, 0.06);
+}
+
+.document-number {
+  color: #f2c85b;
+
+  font-size: 9px;
+
+  font-weight: 900;
+}
+
+.document-item > svg {
+  color: #f2c85b;
+}
+
+.document-item > span:last-child {
+  color: #c7d1df;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   SUPPORT SECTION
+========================================================= */
+
+.admission-support-section {
+  position: relative;
+
+  background:
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(217, 168, 63, 0.07),
+      transparent 25%
+    ),
+    #f7f9fc;
+}
+
+
+/* =========================================================
+   SUPPORT GRID
+========================================================= */
+
+.support-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 20px;
+
+  margin-top: 50px;
+}
+
+.support-card {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 30px;
+
+  min-height: 280px;
+
+  border-radius: 22px;
+
+  border:
+    1px solid rgba(7, 26, 58, 0.07);
+
+  background:
+    #fff;
+
+  box-shadow:
+    0 16px 40px rgba(7, 26, 58, 0.055);
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.support-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 150px;
+  height: 150px;
+
+  right: -75px;
+  bottom: -75px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(217, 168, 63, 0.12),
+      transparent 70%
+    );
+}
+
+.support-card:hover {
+  transform: translateY(-8px);
+
+  border-color:
+    rgba(217, 168, 63, 0.3);
+
+  box-shadow:
+    0 25px 55px rgba(7, 26, 58, 0.1);
+}
+
+.support-number {
+  color: #d9a83f;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size: 24px;
+}
+
+.support-icon {
+  width: 50px;
+  height: 50px;
+
+  display: grid;
+  place-items: center;
+
+  margin: 28px 0 20px;
+
+  border-radius: 15px;
+
+  color: #d9a83f;
+
+  background:
+    rgba(217, 168, 63, 0.08);
+
+  border:
+    1px solid rgba(217, 168, 63, 0.17);
+}
+
+.support-card h3 {
+  margin: 0 0 10px;
+
+  color: #10233f;
+
+  font-size: 17px;
+}
+
+.support-card p {
+  max-width: 310px;
+
+  margin: 0;
+
+  color: #687386;
+
+  font-size: 12px;
+
+  line-height: 1.75;
+}
+
+
+/* =========================================================
+   FINAL SECTION
+========================================================= */
+
+.admission-final-section {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 100px 0;
+
+  text-align: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(217, 168, 63, 0.13),
+      transparent 38%
+    ),
+    #f7f9fc;
+}
+
+.admission-final-glow {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  left: 50%;
+  top: -370px;
+
+  transform:
+    translateX(-50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(217, 168, 63, 0.14),
+      transparent 70%
+    );
+
+  filter: blur(15px);
+}
+
+.admission-final-content {
+  position: relative;
+  z-index: 2;
+}
+
+.admission-final-content .section-label {
+  color: #d9a83f;
+}
+
+.admission-final-content h2 {
+  margin: 15px auto 18px;
+
+  max-width: 750px;
+
+  font-family:
+    "Playfair Display",
+    Georgia,
+    serif;
+
+  font-size:
+    clamp(40px, 4vw, 60px);
+
+  line-height: 1.08;
+
+  color: #0b1f3a;
+
+  letter-spacing: -1.5px;
+}
+
+.admission-final-content h2 span {
+  color: #d9a83f;
+}
+
+.admission-final-content p {
+  max-width: 600px;
+
+  margin: auto;
+
+  color: #687386;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+}
+
+.admission-final-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 30px;
+
+  padding: 15px 24px;
+
+  border-radius: 999px;
+
+  text-decoration: none;
+
+  color: #071a3a;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f7d36b,
+      #d9a83f
+    );
+
+  font-size: 13px;
+
+  font-weight: 900;
+
+  box-shadow:
+    0 15px 35px rgba(217, 168, 63, 0.2);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.admission-final-btn:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 20px 40px rgba(217, 168, 63, 0.32);
+}
+
+.admission-final-btn svg {
+  transition:
+    transform 0.3s ease;
+}
+
+.admission-final-btn:hover svg {
+  transform: translateX(4px);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes admissionParticleFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translateY(-18px);
+    opacity: 1;
+  }
+}
+
+
+@keyframes journeyCenterFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+
+@keyframes journeyNodeFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+
+@keyframes journeyOrbitOne {
+
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotateX(70deg)
+      rotateZ(-15deg);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotateX(70deg)
+      rotateZ(345deg);
+  }
+}
+
+
+@keyframes journeyOrbitTwo {
+
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotateX(68deg)
+      rotateY(25deg)
+      rotateZ(20deg);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotateX(68deg)
+      rotateY(25deg)
+      rotateZ(380deg);
+  }
+}
+
+
+@keyframes journeyOrbitThree {
+
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotateX(65deg)
+      rotateY(-25deg)
+      rotateZ(-20deg);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotateX(65deg)
+      rotateY(-25deg)
+      rotateZ(340deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — 1100px
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .admission-hero-inner {
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 5px;
+  }
+
+  .admission-hero h1 {
+    font-size: 60px;
+  }
+
+  .admission-hero-visual {
+    width: 560px;
+    height: 560px;
+  }
+
+  .orbit-one {
+    width: 370px;
+    height: 370px;
+  }
+
+  .orbit-two {
+    width: 435px;
+    height: 435px;
+  }
+
+  .orbit-three {
+    width: 300px;
+    height: 300px;
+  }
+
+  .journey-center {
+    width: 180px;
+    height: 180px;
+  }
+
+  .admission-documents-grid {
+    gap: 45px;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — 900px
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .admission-hero {
+    min-height: auto;
+  }
+
+  .admission-hero-inner {
+    min-height: auto;
+
+    grid-template-columns: 1fr;
+  }
+
+  .admission-hero-content {
+    padding: 85px 0 25px;
+
+    text-align: center;
+  }
+
+  .admission-hero-content > p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .admission-hero-actions {
+    justify-content: center;
+  }
+
+  .admission-hero-trust {
+    justify-content: center;
+  }
+
+  .admission-hero-visual {
+    min-height: 570px;
+  }
+
+  .admission-documents-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .documents-content {
+    text-align: center;
+  }
+
+  .documents-content > p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .documents-note {
+    margin-left: auto;
+    margin-right: auto;
+
+    text-align: left;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — 700px
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .admission-timeline {
+    margin-top: 50px;
+
+    padding-left: 45px;
+  }
+
+  .timeline-line {
+    left: 21px;
+
+    transform: none;
+  }
+
+  .admission-step,
+  .step-left,
+  .step-right {
+    min-height: auto;
+
+    padding: 0;
+
+    margin-bottom: 22px;
+
+    justify-content: flex-start;
+  }
+
+  .step-number {
+    left: 0;
+    top: 25px;
+
+    transform:
+      translateX(-50%);
+
+    width: 42px;
+    height: 42px;
+
+    box-shadow:
+      0 0 0 6px #f7f9fc,
+      0 8px 20px rgba(7, 26, 58, 0.12);
+  }
+
+  .step-card {
+    margin-left: 0;
+
+    padding: 22px;
+  }
+
+  .support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .support-card {
+    min-height: auto;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — 600px
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .admission-hero-content {
+    padding-top: 65px;
+  }
+
+  .admission-hero h1 {
+    font-size: 47px;
+
+    letter-spacing: -2px;
+  }
+
+  .admission-tagline {
+    font-size: 11px;
+  }
+
+  .admission-hero-content > p {
+    font-size: 13px;
+  }
+
+  .admission-hero-actions {
+    flex-direction: column;
+  }
+
+  .admission-primary-btn,
+  .admission-secondary-btn {
+    width: 100%;
+  }
+
+  .admission-hero-trust {
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 10px;
+  }
+
+  .admission-hero-visual {
+    width: 100%;
+
+    height: 470px;
+
+    min-height: 470px;
+  }
+
+  .journey-center {
+    width: 145px;
+    height: 145px;
+  }
+
+  .journey-center-inner strong {
+    font-size: 22px;
+  }
+
+  .journey-center-inner svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .orbit-one {
+    width: 290px;
+    height: 290px;
+  }
+
+  .orbit-two {
+    width: 350px;
+    height: 350px;
+  }
+
+  .orbit-three {
+    width: 245px;
+    height: 245px;
+  }
+
+  .journey-node {
+    min-width: 78px;
+
+    padding: 8px 9px;
+
+    font-size: 8px;
+  }
+
+  .journey-node svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .node-one {
+    top: 7%;
+  }
+
+  .node-two {
+    right: 0;
+    top: 24%;
+  }
+
+  .node-three {
+    right: 0;
+    bottom: 24%;
+  }
+
+  .node-four {
+    bottom: 7%;
+  }
+
+  .node-five {
+    left: 0;
+    bottom: 24%;
+  }
+
+  .admission-process-section {
+    padding-top: 75px;
+    padding-bottom: 75px;
+  }
+
+  .admission-documents-section {
+    padding-top: 75px;
+    padding-bottom: 75px;
+  }
+
+  .documents-card {
+    padding: 20px;
+  }
+
+  .documents-list {
+    grid-template-columns: 1fr;
+  }
+
+  .admission-support-section {
+    padding-top: 75px;
+    padding-bottom: 75px;
+  }
+
+  .admission-final-section {
+    padding: 75px 0;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .admission-page *,
+  .admission-page *::before,
+  .admission-page *::after {
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+  }
+
+}

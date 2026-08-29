@@ -1,0 +1,881 @@
+/* =========================================
+   NAVBAR WRAPPER
+========================================= */
+
+.nav-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(7, 26, 58, 0.97),
+      rgba(7, 26, 58, 0.91)
+    );
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.08);
+
+  transition:
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+
+/* =========================================
+   SCROLLED NAVBAR
+========================================= */
+
+.nav-wrap.nav-scrolled {
+  background:
+    rgba(5, 20, 45, 0.97);
+
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================
+   TOP GOLD LIGHT
+========================================= */
+
+.nav-top-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(240, 200, 91, 0.55),
+      transparent
+    );
+
+  opacity: 0.75;
+}
+
+
+/* =========================================
+   NAV CONTAINER
+========================================= */
+
+.nav {
+  position: relative;
+
+  width: min(1280px, 94%);
+  height: 80px;
+
+  margin: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+/* =========================================
+   BRAND
+========================================= */
+
+.brand {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  color: #fff;
+  text-decoration: none;
+
+  z-index: 10;
+}
+
+
+/* =========================================
+   REAL EDUGUIDE LOGO
+========================================= */
+
+.brand-logo {
+  position: relative;
+
+  width: 53px;
+  height: 53px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 22px rgba(201, 150, 47, 0.20),
+    0 0 0 1px rgba(240, 200, 91, 0.35);
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+
+/* =========================================
+   LOGO IMAGE
+========================================= */
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+}
+
+
+/* =========================================
+   LOGO HOVER
+========================================= */
+
+.brand:hover .brand-logo {
+  transform:
+    translateY(-2px)
+    rotate(-3deg);
+
+  box-shadow:
+    0 13px 30px rgba(201, 150, 47, 0.32),
+    0 0 0 1px rgba(240, 200, 91, 0.55);
+}
+
+
+/* =========================================
+   BRAND TEXT
+========================================= */
+
+.brand-text b {
+  display: block;
+
+  font-size: 15px;
+  font-weight: 850;
+
+  letter-spacing: 1.2px;
+}
+
+
+.brand-text small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #bfc9d8;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 1.8px;
+}
+
+
+/* =========================================
+   NAV LINKS
+========================================= */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+
+/* =========================================
+   NORMAL LINK
+========================================= */
+
+.nav-links > a:not(.nav-cta) {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 9px 13px;
+
+  border-radius: 11px;
+
+  color: #c8d2e2;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+
+.nav-links > a:not(.nav-cta):hover {
+  color: #fff;
+
+  background:
+    rgba(255, 255, 255, 0.075);
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* =========================================
+   ACTIVE LINK
+========================================= */
+
+.nav-links > a.active:not(.nav-cta) {
+  color: #fff;
+
+  background:
+    rgba(255, 255, 255, 0.065);
+}
+
+
+.nav-links > a.active:not(.nav-cta)::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: 4px;
+
+  width: 18px;
+  height: 2px;
+
+  transform:
+    translateX(-50%);
+
+  border-radius: 50px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--gold2),
+      var(--gold)
+    );
+
+  box-shadow:
+    0 0 10px rgba(240, 200, 91, 0.45);
+
+  animation:
+    navActiveIn 0.3s ease;
+}
+
+
+/* =========================================
+   HIDDEN REACT MARKER
+========================================= */
+
+.nav-links a i {
+  display: none;
+}
+
+
+/* =========================================
+   CTA BUTTON
+========================================= */
+
+.nav-links .nav-cta {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 43px;
+
+  margin-left: 9px;
+
+  padding: 11px 16px;
+
+  border-radius: 12px;
+
+  background:
+    rgba(240, 200, 91, 0.08);
+
+  border:
+    1px solid rgba(240, 200, 91, 0.45);
+
+  color: var(--gold2);
+
+  font-size: 11px;
+  font-weight: 850;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 10px 24px rgba(201, 150, 47, 0.12);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+/* =========================================
+   CTA TEXT
+========================================= */
+
+.nav-links .nav-cta span {
+  color: #c8d2e2;
+}
+
+
+/* =========================================
+   CTA SHINE
+========================================= */
+
+.nav-links .nav-cta::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -110%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.35),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition:
+    left 0.65s ease;
+}
+
+
+.nav-links .nav-cta:hover::before {
+  left: 140%;
+}
+
+
+/* =========================================
+   CTA HOVER
+========================================= */
+
+.nav-links .nav-cta:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    rgb(243, 242, 240);
+
+  border-color:
+    var(--gold2);
+
+  box-shadow:
+    0 15px 30px rgba(201, 150, 47, 0.22);
+
+  color: var(--gold2) !important;
+
+  -webkit-text-fill-color: var(--gold2);
+}
+
+
+/* =========================================
+   CTA TEXT ON HOVER
+========================================= */
+
+.nav-links .nav-cta:hover span {
+  color: var(--gold2) !important;
+}
+
+
+/* =========================================
+   CTA ICON
+========================================= */
+
+.nav-links .nav-cta svg {
+  color: var(--gold2) !important;
+
+  transition:
+    transform 0.3s ease;
+}
+
+
+.nav-links .nav-cta:hover svg {
+  color: var(--gold2) !important;
+
+  transform:
+    translate(3px, -3px);
+}
+
+
+/* =========================================
+   MOBILE MENU BUTTON
+========================================= */
+
+.menu-btn {
+  display: none;
+
+  position: relative;
+
+  width: 43px;
+  height: 43px;
+
+  padding: 0;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.1);
+
+  border-radius: 12px;
+
+  background:
+    rgba(241, 238, 238, 0.907);
+
+  color: #fff;
+
+  cursor: pointer;
+
+  z-index: 1100;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+
+.menu-btn:hover {
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  border-color:
+    rgba(240, 200, 91, 0.3);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.menu-btn.menu-open {
+  color: var(--gold2);
+
+  background:
+    rgba(240, 200, 91, 0.08);
+
+  border-color:
+    rgba(240, 200, 91, 0.25);
+}
+
+
+.menu-icon {
+  display: grid;
+  place-items: center;
+}
+
+
+/* =========================================
+   MOBILE BACKDROP
+========================================= */
+
+.nav-backdrop {
+  display: none;
+}
+
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes navActiveIn {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+
+  to {
+    width: 18px;
+    opacity: 1;
+  }
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .nav {
+    width: min(1280px, 95%);
+  }
+
+  .nav-links {
+    gap: 1px;
+  }
+
+  .nav-links > a:not(.nav-cta) {
+    padding-left: 9px;
+    padding-right: 9px;
+
+    font-size: 11px;
+  }
+
+  .nav-links .nav-cta {
+    margin-left: 5px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+
+    color: var(--gold2) !important;
+  }
+
+  .nav-links .nav-cta span {
+    color: var(--gold2) !important;
+  }
+}
+
+
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
+
+@media (max-width: 820px) {
+
+  .nav {
+    height: 72px;
+  }
+
+
+  /* =======================================
+     MOBILE LOGO
+  ======================================= */
+
+  .brand-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+
+  /* =======================================
+     MENU BUTTON
+  ======================================= */
+
+  .menu-btn {
+    display: grid;
+    place-items: center;
+  }
+
+
+  /* =======================================
+     NAVIGATION PANEL
+  ======================================= */
+
+  .nav-links {
+    position: fixed;
+
+    top: 72px;
+    left: 0;
+    right: 0;
+
+    width: 100%;
+
+    padding: 15px 5% 22px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 5px;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(7, 26, 58, 0.99),
+        rgba(5, 20, 45, 0.99)
+      );
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    border-bottom:
+      1px solid rgba(255, 255, 255, 0.1);
+
+    box-shadow:
+      0 25px 45px rgba(0, 0, 0, 0.22);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+      translateY(-15px)
+      scaleY(0.96);
+
+    transform-origin: top;
+
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      visibility 0.3s ease;
+
+    z-index: 1050;
+  }
+
+
+  .nav-links.show {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+      translateY(0)
+      scaleY(1);
+  }
+
+
+  /* =======================================
+     MOBILE LINKS
+  ======================================= */
+
+  .nav-links > a:not(.nav-cta) {
+    min-height: 49px;
+
+    justify-content: flex-start;
+
+    padding: 13px 15px;
+
+    border-radius: 12px;
+
+    font-size: 13px;
+
+    color: #c8d2e2;
+  }
+
+
+  .nav-links > a:not(.nav-cta):hover {
+    background:
+      rgba(255, 255, 255, 0.07);
+
+    transform:
+      translateX(4px);
+  }
+
+
+  /* =======================================
+     MOBILE ACTIVE
+  ======================================= */
+
+  .nav-links > a.active:not(.nav-cta) {
+    color: #fff;
+
+    background:
+      rgba(240, 200, 91, 0.07);
+  }
+
+
+  .nav-links > a.active:not(.nav-cta)::before {
+    left: 8px;
+
+    bottom: 50%;
+
+    width: 3px;
+    height: 20px;
+
+    transform:
+      translateY(50%);
+
+    border-radius: 10px;
+
+    background:
+      linear-gradient(
+        180deg,
+        var(--gold2),
+        var(--gold)
+      );
+  }
+
+
+  /* =======================================
+     MOBILE CTA
+  ======================================= */
+
+  .nav-links .nav-cta {
+    width: 100%;
+
+    min-height: 50px;
+
+    margin: 8px 0 0;
+
+    border-radius: 13px;
+
+    font-size: 12px;
+
+    background:
+      rgba(240, 200, 91, 0.08);
+
+    border:
+      1px solid rgba(240, 200, 91, 0.45);
+
+    color: var(--gold2) !important;
+
+    -webkit-text-fill-color: var(--gold2);
+  }
+
+
+  .nav-links .nav-cta span {
+    color: var(--gold2) !important;
+  }
+
+
+  .nav-links .nav-cta svg {
+    color: var(--gold2) !important;
+  }
+
+
+  /* =======================================
+     BACKDROP
+  ======================================= */
+
+  .nav-backdrop {
+    display: block;
+
+    position: fixed;
+
+    inset: 72px 0 0;
+
+    background:
+      rgba(0, 0, 0, 0.25);
+
+    backdrop-filter:
+      blur(2px);
+
+    z-index: 1040;
+
+    animation:
+      backdropFade 0.25s ease;
+  }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 560px) {
+
+  .nav {
+    width: 92%;
+    height: 68px;
+  }
+
+
+  .brand {
+    gap: 9px;
+  }
+
+
+  .brand-logo {
+    width: 43px;
+    height: 43px;
+  }
+
+
+  .brand-text b {
+    font-size: 14px;
+  }
+
+
+  .brand-text small {
+    font-size: 7px;
+
+    letter-spacing: 1.5px;
+  }
+
+
+  .menu-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+
+  .nav-links {
+    top: 68px;
+  }
+
+
+  .nav-backdrop {
+    inset: 68px 0 0;
+  }
+}
+
+
+/* =========================================
+   BACKDROP ANIMATION
+========================================= */
+
+@keyframes backdropFade {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .brand-logo,
+  .nav-links,
+  .nav-links .nav-cta,
+  .nav-links .nav-cta::before,
+  .nav-links .nav-cta svg,
+  .menu-btn {
+
+    transition: none;
+  }
+
+
+  .nav-links > a.active:not(.nav-cta)::before {
+    animation: none;
+  }
+}

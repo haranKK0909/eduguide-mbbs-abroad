@@ -1,0 +1,594 @@
+/* =========================================================
+   COUNTRY CARD
+   ========================================================= */
+
+.country-card {
+  position: relative;
+  min-height: 330px;
+  padding: 1px;
+  border-radius: 24px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(232, 237, 246, 0.75)
+    );
+
+  border: 1px solid rgba(7, 26, 58, 0.08);
+
+  box-shadow:
+    0 12px 35px rgba(7, 26, 58, 0.06);
+
+  transform-style: preserve-3d;
+
+  transition:
+    transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.45s ease,
+    border-color 0.35s ease;
+}
+
+
+/* =========================================================
+   CARD HOVER
+   ========================================================= */
+
+.country-card:hover {
+  transform:
+    translateY(-12px)
+    rotateX(2deg)
+    rotateY(-2deg);
+
+  border-color:
+    rgba(201, 150, 47, 0.28);
+
+  box-shadow:
+    0 28px 60px rgba(7, 26, 58, 0.13),
+    0 0 0 1px rgba(201, 150, 47, 0.05);
+}
+
+
+/* =========================================================
+   GOLD TOP BORDER
+   ========================================================= */
+
+.country-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 12%;
+  right: 12%;
+
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--gold2),
+      transparent
+    );
+
+  opacity: 0.65;
+
+  transform: scaleX(0.4);
+
+  transition:
+    transform 0.45s ease,
+    opacity 0.45s ease;
+}
+
+.country-card:hover::before {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+
+/* =========================================================
+   INNER CARD
+   ========================================================= */
+
+.country-card-inner {
+  position: relative;
+
+  min-height: 328px;
+
+  padding: 26px;
+
+  border-radius: 23px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.99),
+      rgba(248, 250, 253, 0.97)
+    );
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   GLOW
+   ========================================================= */
+
+.country-card-glow {
+  position: absolute;
+
+  width: 230px;
+  height: 230px;
+
+  right: -120px;
+  bottom: -120px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(217, 168, 63, 0.24),
+      rgba(217, 168, 63, 0.05) 45%,
+      transparent 70%
+    );
+
+  filter: blur(5px);
+
+  transition:
+    transform 0.6s ease,
+    opacity 0.5s ease;
+}
+
+.country-card:hover .country-card-glow {
+  transform: scale(1.45);
+}
+
+
+/* =========================================================
+   DECORATIVE RING
+   ========================================================= */
+
+.country-card-ring {
+  position: absolute;
+
+  width: 170px;
+  height: 170px;
+
+  right: -85px;
+  top: -85px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(201, 150, 47, 0.13);
+
+  transition:
+    transform 0.7s ease;
+}
+
+.country-card-ring::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 22px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(7, 26, 58, 0.05);
+}
+
+.country-card:hover .country-card-ring {
+  transform: rotate(35deg) scale(1.12);
+}
+
+
+/* =========================================================
+   TOP SECTION
+   ========================================================= */
+
+.country-top {
+  position: relative;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  z-index: 3;
+}
+
+
+/* =========================================================
+   COUNTRY CODE
+   ========================================================= */
+
+.country-code-wrap {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.country-code {
+  font-family: "Playfair Display", serif;
+
+  font-size: 46px;
+
+  line-height: 0.9;
+
+  font-weight: 800;
+
+  letter-spacing: -2px;
+
+  color:
+    rgba(7, 26, 58, 0.10);
+
+  transition:
+    color 0.35s ease,
+    transform 0.35s ease;
+}
+
+.country-card:hover .country-code {
+  color:
+    rgba(201, 150, 47, 0.18);
+
+  transform:
+    translateX(3px);
+}
+
+.country-label {
+  font-size: 8px;
+
+  font-weight: 900;
+
+  letter-spacing: 2px;
+
+  color:
+    rgba(7, 26, 58, 0.38);
+}
+
+
+/* =========================================================
+   GLOBE ICON
+   ========================================================= */
+
+.country-icon {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 13px;
+
+  color: var(--navy);
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff8df,
+      #e8c967
+    );
+
+  box-shadow:
+    0 8px 20px rgba(201, 150, 47, 0.16);
+
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.country-card:hover .country-icon {
+  transform:
+    translateY(-3px)
+    rotate(-8deg);
+
+  box-shadow:
+    0 13px 25px rgba(201, 150, 47, 0.24);
+}
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.country-heading {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 28px;
+}
+
+.country-line {
+  width: 24px;
+  height: 2px;
+
+  flex: 0 0 auto;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--gold),
+      var(--gold2)
+    );
+
+  transition:
+    width 0.35s ease;
+}
+
+.country-card:hover .country-line {
+  width: 38px;
+}
+
+.country-card h2 {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+
+  font-size: 28px;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.4px;
+
+  color: var(--navy);
+}
+
+
+/* =========================================================
+   SUBTITLE
+   ========================================================= */
+
+.country-subtitle {
+  display: block;
+
+  margin-top: 10px;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+  letter-spacing: 0.5px;
+
+  text-transform: uppercase;
+
+  color: var(--gold);
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.country-description {
+  margin: 13px 0 0;
+
+  max-width: 95%;
+
+  color: var(--muted);
+
+  font-size: 13px;
+
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   BOTTOM
+   ========================================================= */
+
+.country-bottom {
+  position: absolute;
+
+  left: 26px;
+  right: 26px;
+  bottom: 23px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-top: 14px;
+
+  border-top:
+    1px solid rgba(7, 26, 58, 0.07);
+}
+
+
+/* =========================================================
+   LINK
+   ========================================================= */
+
+.country-link {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  text-decoration: none;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  color: var(--navy);
+
+  transition:
+    color 0.3s ease;
+}
+
+.country-link:hover {
+  color: var(--gold);
+}
+
+
+/* =========================================================
+   LINK ICON
+   ========================================================= */
+
+.country-link-icon {
+  width: 27px;
+  height: 27px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: var(--navy);
+
+  background:
+    rgba(7, 26, 58, 0.06);
+
+  transition:
+    transform 0.35s ease,
+    background 0.35s ease,
+    color 0.35s ease;
+}
+
+.country-link:hover .country-link-icon {
+  transform:
+    translate(3px, -3px);
+
+  background:
+    var(--gold);
+
+  color: #fff;
+}
+
+
+/* =========================================================
+   SMALL COUNTRY NUMBER
+   ========================================================= */
+
+.country-number {
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  color:
+    rgba(7, 26, 58, 0.20);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .country-card {
+    min-height: 315px;
+  }
+
+  .country-card-inner {
+    min-height: 313px;
+    padding: 24px;
+  }
+
+  .country-card h2 {
+    font-size: 26px;
+  }
+
+  .country-bottom {
+    left: 24px;
+    right: 24px;
+  }
+}
+
+
+@media (max-width: 820px) {
+
+  .country-card {
+    min-height: 320px;
+  }
+
+  .country-card-inner {
+    min-height: 318px;
+  }
+
+  .country-card:hover {
+    transform: translateY(-8px);
+  }
+}
+
+
+@media (max-width: 560px) {
+
+  .country-card {
+    min-height: 305px;
+
+    border-radius: 21px;
+  }
+
+  .country-card-inner {
+    min-height: 303px;
+
+    padding: 22px;
+
+    border-radius: 20px;
+  }
+
+  .country-code {
+    font-size: 42px;
+  }
+
+  .country-icon {
+    width: 39px;
+    height: 39px;
+  }
+
+  .country-heading {
+    margin-top: 25px;
+  }
+
+  .country-card h2 {
+    font-size: 25px;
+  }
+
+  .country-description {
+    font-size: 13px;
+    max-width: 100%;
+  }
+
+  .country-bottom {
+    left: 22px;
+    right: 22px;
+    bottom: 20px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .country-card,
+  .country-card::before,
+  .country-card-glow,
+  .country-card-ring,
+  .country-icon,
+  .country-code,
+  .country-line,
+  .country-link-icon {
+    transition: none !important;
+  }
+
+  .country-card:hover {
+    transform: none;
+  }
+}
