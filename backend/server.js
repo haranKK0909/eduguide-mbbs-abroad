@@ -26,14 +26,16 @@ const FRONTEND_URL =
    MIDDLEWARE
 ========================================= */
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://eduguideeducationalservices.netlify.app"
+];
+
 app.use(
   cors({
-    origin: [
-      FRONTEND_URL,
-      "https://eduguideeducationalservices.netlify.app"
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type"]
   })
 );
 
@@ -45,12 +47,16 @@ app.use(express.json());
 ========================================= */
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
 
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+
+  family: 4,
 });
 
 
