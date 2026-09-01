@@ -39,7 +39,7 @@ export default function Contact() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/enquiry",
+  "https://eduguide-backend-wtny.onrender.com/api/enquiry",
         {
           method: "POST",
           headers: {

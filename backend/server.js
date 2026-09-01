@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -9,7 +10,17 @@ const path = require("path");
 dotenv.config();
 
 const app = express();
+
 const PORT = process.env.PORT || 5000;
+
+/* =========================================
+   CONFIGURATION
+========================================= */
+
+const FRONTEND_URL =
+  process.env.FRONTEND_URL ||
+  "https://eduguideeducationalservices.netlify.app";
+
 
 /* =========================================
    MIDDLEWARE
@@ -17,7 +28,12 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173"
+    origin: [
+      FRONTEND_URL,
+      "https://eduguideeducationalservices.netlify.app"
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
   })
 );
 
@@ -33,8 +49,8 @@ const transporter = nodemailer.createTransport({
 
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 
@@ -45,10 +61,14 @@ const transporter = nodemailer.createTransport({
 transporter.verify((error) => {
 
   if (error) {
+
     console.log("❌ Email configuration error:");
     console.log(error.message);
+
   } else {
+
     console.log("✅ Gmail server is ready.");
+
   }
 
 });
@@ -60,9 +80,9 @@ transporter.verify((error) => {
 
 app.get("/", (req, res) => {
 
-  res.json({
+  res.status(200).json({
     success: true,
-    message: "EduGuide Backend is running 🚀"
+    message: "EduGuide Backend is running 🚀",
   });
 
 });
@@ -82,7 +102,7 @@ app.post("/api/enquiry", async (req, res) => {
       email,
       country,
       academicStatus,
-      message
+      message,
     } = req.body;
 
 
@@ -100,7 +120,7 @@ app.post("/api/enquiry", async (req, res) => {
 
       return res.status(400).json({
         success: false,
-        message: "Please fill all required fields."
+        message: "Please fill all required fields.",
       });
 
     }
@@ -119,7 +139,9 @@ app.post("/api/enquiry", async (req, res) => {
 
       fs.mkdirSync(
         pdfFolder,
-        { recursive: true }
+        {
+          recursive: true,
+        }
       );
 
     }
@@ -133,8 +155,7 @@ app.post("/api/enquiry", async (req, res) => {
       .replace(/[^a-z0-9]/gi, "_")
       .substring(0, 40);
 
-    const timestamp =
-      Date.now();
+    const timestamp = Date.now();
 
     const fileName =
       `EduGuide_Enquiry_${safeName}_${timestamp}.pdf`;
@@ -150,11 +171,10 @@ app.post("/api/enquiry", async (req, res) => {
        CREATE PDF
     ====================================== */
 
-    const doc =
-      new PDFDocument({
-        size: "A4",
-        margin: 50
-      });
+    const doc = new PDFDocument({
+      size: "A4",
+      margin: 50,
+    });
 
     const writeStream =
       fs.createWriteStream(pdfPath);
@@ -167,10 +187,11 @@ app.post("/api/enquiry", async (req, res) => {
     doc
       .fontSize(24)
       .font("Helvetica-Bold")
+      .fillColor("#111111")
       .text(
         "EDUGUIDE",
         {
-          align: "center"
+          align: "center",
         }
       );
 
@@ -181,7 +202,7 @@ app.post("/api/enquiry", async (req, res) => {
       .text(
         "EDUCATIONAL SERVICES",
         {
-          align: "center"
+          align: "center",
         }
       );
 
@@ -194,9 +215,7 @@ app.post("/api/enquiry", async (req, res) => {
       .fillColor("#111111")
       .fontSize(18)
       .font("Helvetica-Bold")
-      .text(
-        "Student Enquiry"
-      );
+      .text("Student Enquiry");
 
     doc.moveDown(1);
 
@@ -218,10 +237,7 @@ app.post("/api/enquiry", async (req, res) => {
 
     /* DETAILS */
 
-    const addField = (
-      label,
-      value
-    ) => {
+    const addField = (label, value) => {
 
       doc
         .fillColor("#111111")
@@ -285,7 +301,7 @@ app.post("/api/enquiry", async (req, res) => {
       .text(
         message || "No message provided.",
         {
-          lineGap: 5
+          lineGap: 5,
         }
       );
 
@@ -300,17 +316,16 @@ app.post("/api/enquiry", async (req, res) => {
       .text(
         "EduGuide Educational Services",
         {
-          align: "center"
+          align: "center",
         }
       );
 
-    doc
-      .text(
-        "Tiruppur, Tamil Nadu",
-        {
-          align: "center"
-        }
-      );
+    doc.text(
+      "Tiruppur, Tamil Nadu",
+      {
+        align: "center",
+      }
+    );
 
 
     doc.end();
@@ -338,16 +353,19 @@ app.post("/api/enquiry", async (req, res) => {
 
 
     /* =====================================
-       EMAIL
+       SEND EMAIL
     ====================================== */
 
     await transporter.sendMail({
 
-      from: `"EduGuide Website" <${process.env.EMAIL_USER}>`,
+      from:
+        `"EduGuide Website" <${process.env.EMAIL_USER}>`,
 
-      to: process.env.EMAIL_USER,
+      to:
+        process.env.EMAIL_USER,
 
-      replyTo: email,
+      replyTo:
+        email,
 
       subject:
         `New EduGuide Enquiry - ${name}`,
@@ -368,9 +386,9 @@ ${message || "No message provided."}
       attachments: [
         {
           filename: fileName,
-          path: pdfPath
-        }
-      ]
+          path: pdfPath,
+        },
+      ],
 
     });
 
@@ -410,7 +428,7 @@ ${message || "No message provided."}
       success: true,
 
       message:
-        "Enquiry submitted successfully."
+        "Enquiry submitted successfully.",
 
     });
 
@@ -422,13 +440,12 @@ ${message || "No message provided."}
       error
     );
 
-
     return res.status(500).json({
 
       success: false,
 
       message:
-        "Something went wrong while submitting the enquiry."
+        "Something went wrong while submitting the enquiry.",
 
     });
 
@@ -443,10 +460,15 @@ ${message || "No message provided."}
 
 app.listen(
   PORT,
+  "0.0.0.0",
   () => {
 
     console.log(
-      `🚀 EduGuide Backend running at http://localhost:${PORT}`
+      `🚀 EduGuide Backend running on port ${PORT}`
+    );
+
+    console.log(
+      `🌐 Frontend allowed: ${FRONTEND_URL}`
     );
 
   }
