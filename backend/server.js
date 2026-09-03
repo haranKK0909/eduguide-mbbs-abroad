@@ -1,11 +1,19 @@
 const express = require("express");
 const cors = require("cors");
-const PDFDocument = require("pdfkit");
 const dotenv = require("dotenv");
+const { Pool } = require("pg");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const PDFDocument = require("pdfkit");
 
 dotenv.config();
 
 const app = express();
+
+/* =========================================
+   CONFIGURATION
+========================================= */
 
 const PORT = process.env.PORT || 5000;
 
@@ -13,936 +21,337 @@ const FRONTEND_URL =
   process.env.FRONTEND_URL ||
   "https://eduguideeducationalservices.netlify.app";
 
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+const JWT_SECRET = process.env.JWT_SECRET;
+
 /* =========================================
-   RESEND CONFIGURATION
+   REQUIRED ENVIRONMENT VARIABLES
 ========================================= */
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!process.env.DATABASE_URL) {
+  console.error("❌ DATABASE_URL is missing.");
+  process.exit(1);
+}
 
-const ADMIN_EMAIL =
-  process.env.ADMIN_EMAIL ||
-  "eduguideeducationservices@gmail.com";
+if (!ADMIN_EMAIL) {
+  console.error("❌ ADMIN_EMAIL is missing.");
+  process.exit(1);
+}
 
-/*
-  IMPORTANT:
+if (!ADMIN_PASSWORD_HASH) {
+  console.error("❌ ADMIN_PASSWORD_HASH is missing.");
+  process.exit(1);
+}
 
-  For testing:
-  EMAIL_FROM can be:
-  EduGuide Website <onboarding@resend.dev>
-
-  For production:
-  Use an email address from your verified domain.
-
-  Example:
-  EduGuide Website <hello@yourdomain.com>
-*/
-
-const EMAIL_FROM =
-  process.env.EMAIL_FROM ||
-  "EduGuide Website <onboarding@resend.dev>";
-
-const RESEND_API_URL = "https://api.resend.com/emails";
-
+if (!JWT_SECRET) {
+  console.error("❌ JWT_SECRET is missing.");
+  process.exit(1);
+}
 
 /* =========================================
-   ALLOWED ORIGINS
+   POSTGRESQL
+========================================= */
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+
+  ssl: {
+    rejectUnauthorized: false,
+  },
+
+  max: 10,
+
+  idleTimeoutMillis: 30000,
+
+  connectionTimeoutMillis: 10000,
+});
+
+console.log("🗄️ PostgreSQL configuration loaded.");
+
+pool.on("error", (error) => {
+  console.error(
+    "❌ Unexpected PostgreSQL pool error:",
+    error.message
+  );
+});
+
+/* =========================================
+   CORS
 ========================================= */
 
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://eduguideeducationalservices.netlify.app",
-  FRONTEND_URL
+  FRONTEND_URL,
 ].filter(Boolean);
 
-
-/* =========================================
-   MIDDLEWARE
-========================================= */
+console.log("🌐 Allowed CORS origins:");
+allowedOrigins.forEach((origin) => {
+  console.log(`   - ${origin}`);
+});
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-
-      // Allow requests without origin
-      // such as Render health checks
+    origin: function (origin, callback) {
+      // Allow requests without Origin header.
+      // Useful for health checks/server-to-server requests.
       if (!origin) {
         return callback(null, true);
       }
 
       if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
+        return callback(null, origin);
       }
+
+      console.warn(`⚠️ CORS blocked origin: ${origin}`);
 
       return callback(
         new Error("Not allowed by CORS")
       );
     },
 
-    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PATCH",
+      "DELETE",
+      "OPTIONS",
+    ],
 
     allowedHeaders: [
-      "Content-Type"
-    ]
+      "Content-Type",
+      "Authorization",
+    ],
+
+    optionsSuccessStatus: 204,
   })
 );
-
-
-/*
-  JSON request body limit.
-  Enquiry form doesn't need a large payload.
-*/
-app.use(
-  express.json({
-    limit: "100kb"
-  })
-);
-
 
 /* =========================================
-   RESEND CONFIG CHECK
+   BODY PARSERS
 ========================================= */
 
-if (!RESEND_API_KEY) {
-
-  console.error(
-    "❌ RESEND_API_KEY is missing."
-  );
-
-} else {
-
-  console.log(
-    "✅ Resend API key detected."
-  );
-
-}
-
-console.log(
-  `📧 Email recipient: ${ADMIN_EMAIL}`
+app.use(
+  express.json({
+    limit: "100kb",
+  })
 );
 
-console.log(
-  `📨 Email sender: ${EMAIL_FROM}`
-);
-
+app.use(cookieParser());
 
 /* =========================================
-   HEALTH CHECK
+   HELPER FUNCTIONS
+========================================= */
+
+function cleanString(value, maxLength) {
+  return String(value ?? "")
+    .trim()
+    .substring(0, maxLength);
+}
+
+function isValidEmail(email) {
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  return emailRegex.test(email);
+}
+
+function isValidPhone(phone) {
+  const digits = phone.replace(/\D/g, "");
+
+  return (
+    digits.length >= 10 &&
+    digits.length <= 15
+  );
+}
+
+/* =========================================
+   ADMIN JWT
+========================================= */
+
+function createAdminToken() {
+  return jwt.sign(
+    {
+      role: "admin",
+      email: ADMIN_EMAIL,
+    },
+    JWT_SECRET,
+    {
+      expiresIn: "8h",
+    }
+  );
+}
+
+/* =========================================
+   ADMIN AUTH MIDDLEWARE
+========================================= */
+
+function requireAdmin(req, res, next) {
+  try {
+    const token = req.cookies.admin_token;
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Admin authentication required.",
+      });
+    }
+
+    const decoded = jwt.verify(
+      token,
+      JWT_SECRET
+    );
+
+    if (
+      decoded.role !== "admin" ||
+      decoded.email !== ADMIN_EMAIL
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid admin credentials.",
+      });
+    }
+
+    req.admin = decoded;
+
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message:
+        "Admin session expired or invalid.",
+    });
+  }
+}
+
+/* =========================================
+   DATABASE INITIALIZATION
+========================================= */
+
+async function initializeDatabase() {
+  try {
+    await pool.query("SELECT NOW()");
+
+    console.log("✅ PostgreSQL connected.");
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS enquiries (
+        id SERIAL PRIMARY KEY,
+
+        name VARCHAR(100) NOT NULL,
+
+        phone VARCHAR(30) NOT NULL,
+
+        email VARCHAR(150) NOT NULL,
+
+        country VARCHAR(100) NOT NULL,
+
+        academic_status VARCHAR(150) NOT NULL,
+
+        message TEXT DEFAULT 'No message provided.',
+
+        status VARCHAR(30) NOT NULL DEFAULT 'New',
+
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    console.log("✅ Enquiries table ready.");
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_enquiries_status
+      ON enquiries(status);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_enquiries_created_at
+      ON enquiries(created_at DESC);
+    `);
+
+    console.log("✅ Enquiry indexes ready.");
+  } catch (error) {
+    console.error(
+      "❌ PostgreSQL initialization failed:",
+      error.message
+    );
+
+    process.exit(1);
+  }
+}
+
+/* =========================================
+   ROOT HEALTH CHECK
 ========================================= */
 
 app.get("/", (req, res) => {
-
   res.status(200).json({
-
     success: true,
-
-    message:
-      "EduGuide Backend is running 🚀"
-
+    message: "EduGuide Backend is running 🚀",
   });
-
 });
 
-
 /* =========================================
-   RESEND EMAIL FUNCTION
+   DATABASE HEALTH CHECK
 ========================================= */
 
-async function sendEmailWithResend({
-  name,
-  phone,
-  email,
-  country,
-  academicStatus,
-  message,
-  pdfBuffer,
-  fileName
-}) {
-
-  if (!RESEND_API_KEY) {
-
-    throw new Error(
-      "RESEND_API_KEY is not configured."
-    );
-
-  }
-
-
-  /*
-    Convert PDF Buffer to Base64.
-
-    Resend accepts Base64 content
-    for email attachments.
-  */
-
-  const pdfBase64 =
-    pdfBuffer.toString("base64");
-
-
-  /* =====================================
-     EMAIL SUBJECT
-  ====================================== */
-
-  const subject =
-    `New EduGuide Enquiry - ${name}`;
-
-
-  /* =====================================
-     PLAIN TEXT EMAIL
-  ====================================== */
-
-  const text = `
-New enquiry received from EduGuide website.
-
-Student Details
-----------------------------
-
-Name: ${name}
-
-Phone: ${phone}
-
-Email: ${email}
-
-Preferred Country: ${country}
-
-Academic Status: ${academicStatus}
-
-Message:
-${message}
-
-----------------------------
-
-EduGuide Educational Services
-Tiruppur, Tamil Nadu
-`;
-
-
-  /* =====================================
-     HTML EMAIL
-  ====================================== */
-
-  const html = `
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>New EduGuide Enquiry</title>
-
-</head>
-
-<body
-  style="
-    margin:0;
-    padding:0;
-    background:#f4f7fb;
-    font-family:Arial,Helvetica,sans-serif;
-  "
->
-
-  <div
-    style="
-      max-width:650px;
-      margin:30px auto;
-      background:#ffffff;
-      border-radius:12px;
-      overflow:hidden;
-      box-shadow:0 4px 20px rgba(0,0,0,0.08);
-    "
-  >
-
-    <!-- HEADER -->
-
-    <div
-      style="
-        background:linear-gradient(
-          135deg,
-          #0f766e,
-          #2563eb
-        );
-        padding:28px;
-        color:#ffffff;
-        text-align:center;
-      "
-    >
-
-      <h1
-        style="
-          margin:0;
-          font-size:28px;
-        "
-      >
-        EDUGUIDE
-      </h1>
-
-      <p
-        style="
-          margin:8px 0 0;
-          font-size:13px;
-          letter-spacing:1px;
-        "
-      >
-        EDUCATIONAL SERVICES
-      </p>
-
-    </div>
-
-
-    <!-- CONTENT -->
-
-    <div
-      style="
-        padding:30px;
-      "
-    >
-
-      <h2
-        style="
-          margin-top:0;
-          color:#111827;
-        "
-      >
-        New Student Enquiry
-      </h2>
-
-
-      <p
-        style="
-          color:#6b7280;
-          font-size:14px;
-        "
-      >
-        A new enquiry has been submitted
-        through the EduGuide website.
-      </p>
-
-
-      <!-- STUDENT DETAILS -->
-
-      <div
-        style="
-          margin-top:25px;
-          border:1px solid #e5e7eb;
-          border-radius:10px;
-          overflow:hidden;
-        "
-      >
-
-        <div
-          style="
-            padding:14px 18px;
-            background:#f9fafb;
-            border-bottom:1px solid #e5e7eb;
-            font-weight:bold;
-            color:#111827;
-          "
-        >
-          Student Details
-        </div>
-
-
-        <div
-          style="
-            padding:18px;
-          "
-        >
-
-          <p>
-            <strong>Full Name:</strong>
-            ${escapeHtml(name)}
-          </p>
-
-          <p>
-            <strong>Phone Number:</strong>
-            ${escapeHtml(phone)}
-          </p>
-
-          <p>
-            <strong>Email Address:</strong>
-            ${escapeHtml(email)}
-          </p>
-
-          <p>
-            <strong>Preferred Country:</strong>
-            ${escapeHtml(country)}
-          </p>
-
-          <p>
-            <strong>Academic Status:</strong>
-            ${escapeHtml(academicStatus)}
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <!-- MESSAGE -->
-
-      <div
-        style="
-          margin-top:20px;
-          padding:18px;
-          background:#f9fafb;
-          border-radius:10px;
-        "
-      >
-
-        <strong
-          style="
-            color:#111827;
-          "
-        >
-          Message
-        </strong>
-
-        <p
-          style="
-            margin-bottom:0;
-            color:#374151;
-            line-height:1.6;
-            white-space:pre-wrap;
-          "
-        >
-          ${escapeHtml(message)}
-        </p>
-
-      </div>
-
-
-      <!-- PDF NOTICE -->
-
-      <div
-        style="
-          margin-top:25px;
-          padding:15px;
-          background:#eff6ff;
-          border-radius:8px;
-          color:#1e40af;
-          font-size:14px;
-        "
-      >
-
-        📎 The complete enquiry details
-        are attached as a PDF file.
-
-      </div>
-
-    </div>
-
-
-    <!-- FOOTER -->
-
-    <div
-      style="
-        padding:20px;
-        background:#f9fafb;
-        border-top:1px solid #e5e7eb;
-        text-align:center;
-        color:#6b7280;
-        font-size:12px;
-      "
-    >
-
-      <strong>
-        EduGuide Educational Services
-      </strong>
-
-      <br>
-
-      Tiruppur, Tamil Nadu
-
-    </div>
-
-  </div>
-
-</body>
-
-</html>
-`;
-
-
-  /* =====================================
-     RESEND API REQUEST
-  ====================================== */
-
-  const controller =
-    new AbortController();
-
-  const timeout =
-    setTimeout(() => {
-
-      controller.abort();
-
-    }, 20000);
-
-
-  try {
-
-    const response =
-      await fetch(
-        RESEND_API_URL,
-        {
-          method: "POST",
-
-          headers: {
-            "Authorization":
-              `Bearer ${RESEND_API_KEY}`,
-
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-
-            from:
-              EMAIL_FROM,
-
-            to: [
-              ADMIN_EMAIL
-            ],
-
-            reply_to:
-              email,
-
-            subject:
-              subject,
-
-            html:
-              html,
-
-            text:
-              text,
-
-            attachments: [
-              {
-                filename:
-                  fileName,
-
-                content:
-                  pdfBase64
-              }
-            ]
-
-          }),
-
-          signal:
-            controller.signal
-        }
-      );
-
-
-    clearTimeout(timeout);
-
-
-    /* =====================================
-       READ RESPONSE
-    ====================================== */
-
-    let result;
-
+app.get(
+  "/api/health",
+  async (req, res) => {
     try {
+      const result = await pool.query(
+        "SELECT NOW() AS current_time"
+      );
 
-      result =
-        await response.json();
-
-    } catch {
-
-      result = {};
-
-    }
-
-
-    /* =====================================
-       RESEND ERROR
-    ====================================== */
-
-    if (!response.ok) {
-
+      res.status(200).json({
+        success: true,
+        message:
+          "Backend and PostgreSQL are connected ✅",
+        database: "PostgreSQL",
+        time: result.rows[0].current_time,
+      });
+    } catch (error) {
       console.error(
-        "❌ Resend API Error:",
-        result
+        "❌ Database health check failed:",
+        error.message
       );
 
-
-      const resendMessage =
-        result?.message ||
-        result?.error ||
-        `Resend request failed with status ${response.status}`;
-
-
-      throw new Error(
-        resendMessage
-      );
-
+      res.status(500).json({
+        success: false,
+        message:
+          "Database connection failed.",
+      });
     }
-
-
-    /* =====================================
-       SUCCESS
-    ====================================== */
-
-    console.log(
-      "✅ Resend email sent successfully:",
-      result?.id || "No email ID returned"
-    );
-
-
-    return result;
-
-
-  } catch (error) {
-
-    clearTimeout(timeout);
-
-
-    if (
-      error.name ===
-      "AbortError"
-    ) {
-
-      throw new Error(
-        "Resend email request timed out."
-      );
-
-    }
-
-
-    throw error;
-
   }
-
-}
-
+);
 
 /* =========================================
-   HTML ESCAPE HELPER
-========================================= */
-
-function escapeHtml(value) {
-
-  return String(value ?? "")
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* =========================================
-   CREATE PDF BUFFER
-========================================= */
-
-function createEnquiryPDF({
-  name,
-  phone,
-  email,
-  country,
-  academicStatus,
-  message
-}) {
-
-  return new Promise(
-    (resolve, reject) => {
-
-      const doc =
-        new PDFDocument({
-          size: "A4",
-          margin: 50
-        });
-
-
-      const chunks = [];
-
-
-      /* ==============================
-         COLLECT PDF DATA IN MEMORY
-      ============================== */
-
-      doc.on(
-        "data",
-        (chunk) => {
-
-          chunks.push(chunk);
-
-        }
-      );
-
-
-      doc.on(
-        "end",
-        () => {
-
-          resolve(
-            Buffer.concat(chunks)
-          );
-
-        }
-      );
-
-
-      doc.on(
-        "error",
-        reject
-      );
-
-
-      /* ==============================
-         HEADER
-      ============================== */
-
-      doc
-        .fontSize(24)
-        .font("Helvetica-Bold")
-        .fillColor("#111111")
-        .text(
-          "EDUGUIDE",
-          {
-            align: "center"
-          }
-        );
-
-
-      doc
-        .fontSize(10)
-        .font("Helvetica")
-        .fillColor("#666666")
-        .text(
-          "EDUCATIONAL SERVICES",
-          {
-            align: "center"
-          }
-        );
-
-
-      doc.moveDown(2);
-
-
-      /* ==============================
-         TITLE
-      ============================== */
-
-      doc
-        .fillColor("#111111")
-        .fontSize(18)
-        .font("Helvetica-Bold")
-        .text(
-          "Student Enquiry"
-        );
-
-
-      doc.moveDown(1);
-
-
-      /* ==============================
-         DATE
-      ============================== */
-
-      doc
-        .fontSize(10)
-        .font("Helvetica")
-        .fillColor("#666666")
-        .text(
-          `Submitted on: ${new Date().toLocaleString(
-            "en-IN"
-          )}`
-        );
-
-
-      doc.moveDown(2);
-
-
-      /* ==============================
-         FIELD HELPER
-      ============================== */
-
-      const addField =
-        (label, value) => {
-
-          doc
-            .fillColor("#111111")
-            .fontSize(11)
-            .font("Helvetica-Bold")
-            .text(
-              `${label}:`
-            );
-
-
-          doc
-            .fillColor("#333333")
-            .fontSize(11)
-            .font("Helvetica")
-            .text(
-              value ||
-              "Not provided"
-            );
-
-
-          doc.moveDown(0.8);
-
-        };
-
-
-      /* ==============================
-         STUDENT DETAILS
-      ============================== */
-
-      addField(
-        "Full Name",
-        name
-      );
-
-
-      addField(
-        "Phone Number",
-        phone
-      );
-
-
-      addField(
-        "Email Address",
-        email
-      );
-
-
-      addField(
-        "Preferred Country",
-        country
-      );
-
-
-      addField(
-        "Academic Status",
-        academicStatus
-      );
-
-
-      /* ==============================
-         MESSAGE
-      ============================== */
-
-      doc.moveDown(0.5);
-
-
-      doc
-        .fillColor("#111111")
-        .fontSize(11)
-        .font("Helvetica-Bold")
-        .text(
-          "Message:"
-        );
-
-
-      doc.moveDown(0.5);
-
-
-      doc
-        .fillColor("#333333")
-        .fontSize(11)
-        .font("Helvetica")
-        .text(
-          message ||
-          "No message provided.",
-          {
-            lineGap: 5
-          }
-        );
-
-
-      /* ==============================
-         FOOTER
-      ============================== */
-
-      doc.moveDown(3);
-
-
-      doc
-        .fontSize(9)
-        .fillColor("#777777")
-        .text(
-          "EduGuide Educational Services",
-          {
-            align: "center"
-          }
-        );
-
-
-      doc.text(
-        "Tiruppur, Tamil Nadu",
-        {
-          align: "center"
-        }
-      );
-
-
-      /* ==============================
-         FINISH PDF
-      ============================== */
-
-      doc.end();
-
-    }
-  );
-
-}
-
-
-/* =========================================
-   ENQUIRY API
+   CUSTOMER ENQUIRY
 ========================================= */
 
 app.post(
   "/api/enquiry",
   async (req, res) => {
-
-    const startTime =
-      Date.now();
-
+    const startTime = Date.now();
 
     try {
-
-      /* =====================================
-         REQUEST DATA
-      ====================================== */
-
       const {
         name,
         phone,
         email,
         country,
         academicStatus,
-        message
-      } = req.body;
+        message,
+      } = req.body || {};
 
-
-      /* =====================================
-         VALIDATION
-      ====================================== */
+      /* -------------------------------------
+         REQUIRED FIELDS
+      ------------------------------------- */
 
       if (
         !name ||
@@ -951,122 +360,979 @@ app.post(
         !country ||
         !academicStatus
       ) {
-
         return res.status(400).json({
-
           success: false,
-
           message:
-            "Please fill all required fields."
-
+            "Please fill all required fields.",
         });
-
       }
 
-
-      /* =====================================
-         SANITIZE BASIC VALUES
-      ====================================== */
+      /* -------------------------------------
+         CLEAN DATA
+      ------------------------------------- */
 
       const cleanName =
-        String(name)
-          .trim()
-          .substring(0, 100);
-
+        cleanString(name, 100);
 
       const cleanPhone =
-        String(phone)
-          .trim()
-          .substring(0, 30);
+        cleanString(phone, 30);
 
+      const cleanEmail =
+        cleanString(email, 150)
+          .toLowerCase();
+
+      const cleanCountry =
+        cleanString(country, 100);
+
+      const cleanAcademicStatus =
+        cleanString(
+          academicStatus,
+          150
+        );
+
+      const cleanMessage = message
+        ? cleanString(message, 3000)
+        : "No message provided.";
+
+      /* -------------------------------------
+         VALIDATION
+      ------------------------------------- */
+
+      if (
+        !cleanName ||
+        !cleanPhone ||
+        !cleanEmail ||
+        !cleanCountry ||
+        !cleanAcademicStatus
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Please provide valid enquiry details.",
+        });
+      }
+
+      if (!isValidEmail(cleanEmail)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Please enter a valid email address.",
+        });
+      }
+
+      if (!isValidPhone(cleanPhone)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Please enter a valid phone number.",
+        });
+      }
+
+      /* -------------------------------------
+         INSERT INTO POSTGRESQL
+      ------------------------------------- */
+
+      const query = `
+        INSERT INTO enquiries (
+          name,
+          phone,
+          email,
+          country,
+          academic_status,
+          message,
+          status
+        )
+        VALUES (
+          $1,
+          $2,
+          $3,
+          $4,
+          $5,
+          $6,
+          $7
+        )
+        RETURNING
+          id,
+          name,
+          phone,
+          email,
+          country,
+          academic_status,
+          message,
+          status,
+          created_at,
+          updated_at;
+      `;
+
+      const values = [
+        cleanName,
+        cleanPhone,
+        cleanEmail,
+        cleanCountry,
+        cleanAcademicStatus,
+        cleanMessage,
+        "New",
+      ];
+
+      const result = await pool.query(
+        query,
+        values
+      );
+
+      const enquiry = result.rows[0];
+
+      const duration =
+        Date.now() - startTime;
+
+      console.log(
+        `✅ Enquiry saved: #${enquiry.id} | ${enquiry.name} | ${duration}ms`
+      );
+
+      return res.status(201).json({
+        success: true,
+        message:
+          "Enquiry submitted successfully.",
+        enquiryId: enquiry.id,
+      });
+    } catch (error) {
+      const duration =
+        Date.now() - startTime;
+
+      console.error(
+        `❌ Enquiry Error after ${duration}ms:`,
+        error.message
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Something went wrong while submitting the enquiry.",
+      });
+    }
+  }
+);
+
+/* =========================================
+   ADMIN LOGIN
+========================================= */
+
+app.post(
+  "/api/admin/login",
+  async (req, res) => {
+    try {
+      const {
+        email,
+        password,
+      } = req.body || {};
+
+      /* -------------------------------------
+         VALIDATION
+      ------------------------------------- */
+
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Email and password are required.",
+        });
+      }
 
       const cleanEmail =
         String(email)
           .trim()
-          .toLowerCase()
-          .substring(0, 150);
+          .toLowerCase();
 
-
-      const cleanCountry =
-        String(country)
-          .trim()
-          .substring(0, 100);
-
-
-      const cleanAcademicStatus =
-        String(academicStatus)
-          .trim()
-          .substring(0, 150);
-
-
-      const cleanMessage =
-        message
-          ? String(message)
-              .trim()
-              .substring(0, 3000)
-          : "No message provided.";
-
-
-      /* =====================================
-         BASIC EMAIL VALIDATION
-      ====================================== */
-
-      const emailRegex =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+      /* -------------------------------------
+         EMAIL CHECK
+      ------------------------------------- */
 
       if (
-        !emailRegex.test(
-          cleanEmail
-        )
+        cleanEmail !==
+        ADMIN_EMAIL.toLowerCase()
       ) {
-
-        return res.status(400).json({
-
+        return res.status(401).json({
           success: false,
-
           message:
-            "Please enter a valid email address."
-
+            "Invalid email or password.",
         });
-
       }
 
+      /* -------------------------------------
+         PASSWORD CHECK
+      ------------------------------------- */
 
-      /* =====================================
-         BASIC PHONE VALIDATION
-      ====================================== */
-
-      const phoneDigits =
-        cleanPhone.replace(
-          /\D/g,
-          ""
+      const passwordValid =
+        await bcrypt.compare(
+          String(password),
+          ADMIN_PASSWORD_HASH
         );
 
-
-      if (
-        phoneDigits.length < 10 ||
-        phoneDigits.length > 15
-      ) {
-
-        return res.status(400).json({
-
+      if (!passwordValid) {
+        return res.status(401).json({
           success: false,
-
           message:
-            "Please enter a valid phone number."
-
+            "Invalid email or password.",
         });
-
       }
 
+      /* -------------------------------------
+         CREATE JWT
+      ------------------------------------- */
 
-      /* =====================================
-         PDF FILE NAME
-      ====================================== */
+      const token =
+        createAdminToken();
+
+      /* -------------------------------------
+         SECURE HTTP-ONLY COOKIE
+      ------------------------------------- */
+
+      const isProduction =
+        process.env.NODE_ENV ===
+        "production";
+
+      res.cookie(
+        "admin_token",
+        token,
+        {
+          httpOnly: true,
+
+          secure: isProduction,
+
+          sameSite: isProduction
+            ? "none"
+            : "lax",
+
+          maxAge:
+            8 * 60 * 60 * 1000,
+
+          path: "/",
+        }
+      );
+
+      console.log(
+        "✅ Admin login successful."
+      );
+
+      return res.status(200).json({
+        success: true,
+        message:
+          "Admin login successful.",
+        admin: {
+          email: ADMIN_EMAIL,
+          role: "admin",
+        },
+      });
+    } catch (error) {
+      console.error(
+        "❌ Admin login error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Unable to login.",
+      });
+    }
+  }
+);
+
+/* =========================================
+   ADMIN LOGOUT
+========================================= */
+
+app.post(
+  "/api/admin/logout",
+  (req, res) => {
+    const isProduction =
+      process.env.NODE_ENV ===
+      "production";
+
+    res.clearCookie(
+      "admin_token",
+      {
+        httpOnly: true,
+
+        secure: isProduction,
+
+        sameSite: isProduction
+          ? "none"
+          : "lax",
+
+        path: "/",
+      }
+    );
+
+    console.log(
+      "✅ Admin logged out."
+    );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Admin logged out successfully.",
+    });
+  }
+);
+
+/* =========================================
+   ADMIN SESSION CHECK
+========================================= */
+
+app.get(
+  "/api/admin/me",
+  requireAdmin,
+  (req, res) => {
+    return res.status(200).json({
+      success: true,
+      authenticated: true,
+      admin: {
+        email: req.admin.email,
+        role: "admin",
+      },
+    });
+  }
+);
+
+/* =========================================
+   ADMIN — GET ALL ENQUIRIES
+========================================= */
+
+app.get(
+  "/api/admin/enquiries",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const {
+        status,
+        search,
+      } = req.query;
+
+      let query = `
+        SELECT
+          id,
+          name,
+          phone,
+          email,
+          country,
+          academic_status,
+          message,
+          status,
+          created_at,
+          updated_at
+        FROM enquiries
+      `;
+
+      const values = [];
+      const conditions = [];
+
+      /* -------------------------------------
+         STATUS FILTER
+      ------------------------------------- */
+
+      if (status) {
+        values.push(
+          String(status)
+        );
+
+        conditions.push(
+          `status = $${values.length}`
+        );
+      }
+
+      /* -------------------------------------
+         SEARCH
+      ------------------------------------- */
+
+      if (search) {
+        const searchValue =
+          `%${String(search).trim()}%`;
+
+        values.push(searchValue);
+
+        const index =
+          values.length;
+
+        conditions.push(`
+          (
+            name ILIKE $${index}
+            OR phone ILIKE $${index}
+            OR email ILIKE $${index}
+            OR country ILIKE $${index}
+          )
+        `);
+      }
+
+      /* -------------------------------------
+         WHERE
+      ------------------------------------- */
+
+      if (conditions.length > 0) {
+        query +=
+          " WHERE " +
+          conditions.join(
+            " AND "
+          );
+      }
+
+      /* -------------------------------------
+         ORDER
+      ------------------------------------- */
+
+      query += `
+        ORDER BY created_at DESC
+      `;
+
+      const result =
+        await pool.query(
+          query,
+          values
+        );
+
+      return res.status(200).json({
+        success: true,
+        total:
+          result.rows.length,
+        enquiries:
+          result.rows,
+      });
+    } catch (error) {
+      console.error(
+        "❌ Admin enquiries error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Unable to fetch enquiries.",
+      });
+    }
+  }
+);
+
+/* =========================================
+   ADMIN — GET SINGLE ENQUIRY
+========================================= */
+
+app.get(
+  "/api/admin/enquiries/:id",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const id =
+        Number(req.params.id);
+
+      if (
+        !Number.isInteger(id) ||
+        id <= 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid enquiry ID.",
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+            SELECT
+              id,
+              name,
+              phone,
+              email,
+              country,
+              academic_status,
+              message,
+              status,
+              created_at,
+              updated_at
+            FROM enquiries
+            WHERE id = $1
+          `,
+          [id]
+        );
+
+      if (
+        result.rows.length === 0
+      ) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Enquiry not found.",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        enquiry:
+          result.rows[0],
+      });
+    } catch (error) {
+      console.error(
+        "❌ Admin single enquiry error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Unable to retrieve enquiry.",
+      });
+    }
+  }
+);
+
+/* =========================================
+   ADMIN — UPDATE STATUS
+========================================= */
+
+app.patch(
+  "/api/admin/enquiries/:id",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const id =
+        Number(req.params.id);
+
+      if (
+        !Number.isInteger(id) ||
+        id <= 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid enquiry ID.",
+        });
+      }
+
+      const {
+        status,
+      } = req.body || {};
+
+      const allowedStatuses = [
+        "New",
+        "Contacted",
+        "Follow-up",
+        "Closed",
+      ];
+
+      if (
+        !allowedStatuses.includes(
+          status
+        )
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid enquiry status.",
+          allowedStatuses,
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+            UPDATE enquiries
+            SET
+              status = $1,
+              updated_at = CURRENT_TIMESTAMP
+            WHERE id = $2
+            RETURNING
+              id,
+              name,
+              phone,
+              email,
+              country,
+              academic_status,
+              message,
+              status,
+              created_at,
+              updated_at;
+          `,
+          [
+            status,
+            id,
+          ]
+        );
+
+      if (
+        result.rows.length === 0
+      ) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Enquiry not found.",
+        });
+      }
+
+      console.log(
+        `✅ Enquiry #${id} status updated to ${status}`
+      );
+
+      return res.status(200).json({
+        success: true,
+        message:
+          "Enquiry status updated successfully.",
+        enquiry:
+          result.rows[0],
+      });
+    } catch (error) {
+      console.error(
+        "❌ Update enquiry error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Unable to update enquiry.",
+      });
+    }
+  }
+);
+
+/* =========================================
+   ADMIN — DELETE ENQUIRY
+========================================= */
+
+app.delete(
+  "/api/admin/enquiries/:id",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const id =
+        Number(req.params.id);
+
+      if (
+        !Number.isInteger(id) ||
+        id <= 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid enquiry ID.",
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+            DELETE FROM enquiries
+            WHERE id = $1
+            RETURNING id, name;
+          `,
+          [id]
+        );
+
+      if (
+        result.rows.length === 0
+      ) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Enquiry not found.",
+        });
+      }
+
+      console.log(
+        `🗑️ Enquiry deleted: #${id} | ${result.rows[0].name}`
+      );
+
+      return res.status(200).json({
+        success: true,
+        message:
+          "Enquiry deleted successfully.",
+        deletedId: id,
+      });
+    } catch (error) {
+      console.error(
+        "❌ Delete enquiry error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Unable to delete enquiry.",
+      });
+    }
+  }
+);
+
+/* =========================================
+   CREATE ENQUIRY PDF
+========================================= */
+
+function createEnquiryPDF(enquiry) {
+  return new Promise(
+    (resolve, reject) => {
+      const doc =
+        new PDFDocument({
+          size: "A4",
+          margin: 50,
+        });
+
+      const chunks = [];
+
+      doc.on(
+        "data",
+        (chunk) => {
+          chunks.push(chunk);
+        }
+      );
+
+      doc.on(
+        "end",
+        () => {
+          resolve(
+            Buffer.concat(chunks)
+          );
+        }
+      );
+
+      doc.on(
+        "error",
+        reject
+      );
+
+      /* -------------------------------------
+         HEADER
+      ------------------------------------- */
+
+      doc
+        .fontSize(24)
+        .font("Helvetica-Bold")
+        .fillColor("#111111")
+        .text(
+          "EDUGUIDE",
+          {
+            align: "center",
+          }
+        );
+
+      doc
+        .fontSize(10)
+        .font("Helvetica")
+        .fillColor("#666666")
+        .text(
+          "EDUCATIONAL SERVICES",
+          {
+            align: "center",
+          }
+        );
+
+      doc.moveDown(2);
+
+      /* -------------------------------------
+         TITLE
+      ------------------------------------- */
+
+      doc
+        .fontSize(18)
+        .font("Helvetica-Bold")
+        .fillColor("#111111")
+        .text("Student Enquiry");
+
+      doc.moveDown();
+
+      doc
+        .fontSize(10)
+        .font("Helvetica")
+        .fillColor("#666666")
+        .text(
+          `Generated on: ${new Date().toLocaleString(
+            "en-IN"
+          )}`
+        );
+
+      doc.moveDown(2);
+
+      /* -------------------------------------
+         FIELD HELPER
+      ------------------------------------- */
+
+      const addField = (
+        label,
+        value
+      ) => {
+        doc
+          .fontSize(11)
+          .font("Helvetica-Bold")
+          .fillColor("#111111")
+          .text(
+            `${label}:`
+          );
+
+        doc
+          .fontSize(11)
+          .font("Helvetica")
+          .fillColor("#333333")
+          .text(
+            value ||
+              "Not provided"
+          );
+
+        doc.moveDown(0.8);
+      };
+
+      /* -------------------------------------
+         DETAILS
+      ------------------------------------- */
+
+      addField(
+        "Enquiry ID",
+        String(enquiry.id)
+      );
+
+      addField(
+        "Full Name",
+        enquiry.name
+      );
+
+      addField(
+        "Phone Number",
+        enquiry.phone
+      );
+
+      addField(
+        "Email Address",
+        enquiry.email
+      );
+
+      addField(
+        "Preferred Country",
+        enquiry.country
+      );
+
+      addField(
+        "Academic Status",
+        enquiry.academic_status
+      );
+
+      addField(
+        "Enquiry Status",
+        enquiry.status
+      );
+
+      /* -------------------------------------
+         MESSAGE
+      ------------------------------------- */
+
+      doc.moveDown(0.5);
+
+      doc
+        .fontSize(11)
+        .font("Helvetica-Bold")
+        .fillColor("#111111")
+        .text("Message:");
+
+      doc.moveDown(0.5);
+
+      doc
+        .fontSize(11)
+        .font("Helvetica")
+        .fillColor("#333333")
+        .text(
+          enquiry.message ||
+            "No message provided.",
+          {
+            lineGap: 5,
+          }
+        );
+
+      /* -------------------------------------
+         FOOTER
+      ------------------------------------- */
+
+      doc.moveDown(3);
+
+      doc
+        .fontSize(9)
+        .fillColor("#777777")
+        .text(
+          "EduGuide Educational Services",
+          {
+            align: "center",
+          }
+        );
+
+      doc.text(
+        "Tiruppur, Tamil Nadu",
+        {
+          align: "center",
+        }
+      );
+
+      doc.end();
+    }
+  );
+}
+
+/* =========================================
+   ADMIN — DOWNLOAD PDF
+========================================= */
+
+app.get(
+  "/api/admin/enquiries/:id/pdf",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const id =
+        Number(req.params.id);
+
+      if (
+        !Number.isInteger(id) ||
+        id <= 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid enquiry ID.",
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+            SELECT
+              id,
+              name,
+              phone,
+              email,
+              country,
+              academic_status,
+              message,
+              status,
+              created_at,
+              updated_at
+            FROM enquiries
+            WHERE id = $1
+          `,
+          [id]
+        );
+
+      if (
+        result.rows.length === 0
+      ) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Enquiry not found.",
+        });
+      }
+
+      const enquiry =
+        result.rows[0];
+
+      const pdfBuffer =
+        await createEnquiryPDF(
+          enquiry
+        );
 
       const safeName =
-        cleanName
+        enquiry.name
           .replace(
             /[^a-z0-9]/gi,
             "_"
@@ -1076,154 +1342,122 @@ app.post(
             40
           );
 
-
-      const timestamp =
-        Date.now();
-
-
       const fileName =
-        `EduGuide_Enquiry_${safeName}_${timestamp}.pdf`;
+        `EduGuide_Enquiry_${safeName}_${enquiry.id}.pdf`;
 
-
-      /* =====================================
-         CREATE PDF IN MEMORY
-         
-         NO DISK WRITE
-         NO fs
-         NO unlink
-      ====================================== */
-
-      const pdfBuffer =
-        await createEnquiryPDF({
-
-          name:
-            cleanName,
-
-          phone:
-            cleanPhone,
-
-          email:
-            cleanEmail,
-
-          country:
-            cleanCountry,
-
-          academicStatus:
-            cleanAcademicStatus,
-
-          message:
-            cleanMessage
-
-        });
-
-
-      /* =====================================
-         SEND EMAIL USING RESEND
-      ====================================== */
-
-      await sendEmailWithResend({
-
-        name:
-          cleanName,
-
-        phone:
-          cleanPhone,
-
-        email:
-          cleanEmail,
-
-        country:
-          cleanCountry,
-
-        academicStatus:
-          cleanAcademicStatus,
-
-        message:
-          cleanMessage,
-
-        pdfBuffer:
-          pdfBuffer,
-
-        fileName:
-          fileName
-
-      });
-
-
-      /* =====================================
-         SUCCESS
-      ====================================== */
-
-      const duration =
-        Date.now() -
-        startTime;
-
-
-      console.log(
-        `✅ Enquiry sent: ${cleanName} | ${duration}ms`
+      res.setHeader(
+        "Content-Type",
+        "application/pdf"
       );
 
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${fileName}"`
+      );
 
-      return res.status(200).json({
+      res.setHeader(
+        "Content-Length",
+        pdfBuffer.length
+      );
 
-        success: true,
-
-        message:
-          "Enquiry submitted successfully."
-
-      });
-
-
+      return res.send(
+        pdfBuffer
+      );
     } catch (error) {
-
-      const duration =
-        Date.now() -
-        startTime;
-
-
       console.error(
-        `❌ Enquiry Error after ${duration}ms:`,
+        "❌ PDF generation error:",
         error.message
       );
 
-
       return res.status(500).json({
-
         success: false,
-
         message:
-          "Something went wrong while submitting the enquiry."
-
+          "Unable to generate PDF.",
       });
-
     }
-
   }
 );
 
+/* =========================================
+   404 HANDLER
+========================================= */
+
+app.use(
+  (req, res) => {
+    res.status(404).json({
+      success: false,
+      message:
+        "API endpoint not found.",
+    });
+  }
+);
+
+/* =========================================
+   GLOBAL ERROR HANDLER
+========================================= */
+
+app.use(
+  (error, req, res, next) => {
+    console.error(
+      "❌ Server error:",
+      error.message
+    );
+
+    // CORS errors
+    if (
+      error.message ===
+      "Not allowed by CORS"
+    ) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "CORS policy blocked this request.",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Internal server error.",
+    });
+  }
+);
 
 /* =========================================
    START SERVER
 ========================================= */
 
-app.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
+initializeDatabase()
+  .then(() => {
+    app.listen(
+      PORT,
+      "0.0.0.0",
+      () => {
+        console.log(
+          `🚀 EduGuide Backend running on port ${PORT}`
+        );
 
-    console.log(
-      `🚀 EduGuide Backend running on port ${PORT}`
+        console.log(
+          `🌐 Frontend allowed: ${FRONTEND_URL}`
+        );
+
+        console.log(
+          "🔐 Admin authentication: READY"
+        );
+
+        console.log(
+          "📊 Admin enquiry APIs: READY"
+        );
+
+        console.log(
+          "📄 Admin PDF generation: READY"
+        );
+      }
     );
-
-
-    console.log(
-      `🌐 Frontend allowed: ${FRONTEND_URL}`
+  })
+  .catch((error) => {
+    console.error(
+      "❌ Server startup failed:",
+      error
     );
-
-
-    console.log(
-      `📧 Resend email service enabled`
-    );
-
-  }
-);
+  });
