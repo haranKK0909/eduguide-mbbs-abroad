@@ -24,7 +24,17 @@ const FRONTEND_URL =
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 const JWT_SECRET = process.env.JWT_SECRET;
-
+console.log("🔐 Admin configuration check:", {
+  adminEmail: ADMIN_EMAIL,
+  hashLoaded: Boolean(ADMIN_PASSWORD_HASH),
+  hashLength: ADMIN_PASSWORD_HASH
+    ? ADMIN_PASSWORD_HASH.length
+    : 0,
+  hashPrefix: ADMIN_PASSWORD_HASH
+    ? ADMIN_PASSWORD_HASH.substring(0, 7)
+    : "MISSING",
+  jwtLoaded: Boolean(JWT_SECRET),
+});
 /* =========================================
    REQUIRED ENVIRONMENT VARIABLES
 ========================================= */
