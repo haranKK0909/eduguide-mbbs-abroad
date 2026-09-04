@@ -18,26 +18,45 @@ function AdminLogin() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/admin/me`, {
+  const checkSession = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/admin/me`,
+        {
           method: "GET",
           credentials: "include",
-        });
-
-        if (response.ok) {
-          navigate("/admin/dashboard", { replace: true });
-          return;
         }
-      } catch (error) {
-        console.error("Session check failed:", error);
-      } finally {
-        setCheckingSession(false);
-      }
-    };
+      );
 
-    checkSession();
-  }, [navigate]);
+      // Already logged in
+      if (response.ok) {
+        navigate("/admin/dashboard", {
+          replace: true,
+        });
+        return;
+      }
+
+      // 401 simply means no active admin session.
+      // This is normal on the login page.
+      if (response.status === 401) {
+        return;
+      }
+
+      console.warn(
+        `Admin session check returned ${response.status}`
+      );
+    } catch (error) {
+      console.error(
+        "Session check failed:",
+        error
+      );
+    } finally {
+      setCheckingSession(false);
+    }
+  };
+
+  checkSession();
+}, [navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
