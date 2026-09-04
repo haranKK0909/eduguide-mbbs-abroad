@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Phone,
@@ -13,77 +13,254 @@ import {
 
 import "./Contact.css";
 
+
+/* =========================================
+   BACKEND URL
+========================================= */
+
+const BACKEND_URL =
+  "https://eduguide-backend-wtny.onrender.com";
+
+
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [submitted, setSubmitted] =
+    useState(false);
 
-    setLoading(true);
-    setSubmitted(false);
-    setError("");
+  const [loading, setLoading] =
+    useState(false);
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+  const [error, setError] =
+    useState("");
 
-    const enquiry = {
-      name: formData.get("name"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      country: formData.get("country"),
-      academicStatus: formData.get("academicStatus"),
-      message: formData.get("message")
-    };
 
-    try {
-      const response = await fetch(
-  "https://eduguide-backend-wtny.onrender.com/api/enquiry",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(enquiry)
-        }
-      );
+  /* =========================================
+     WAKE UP BACKEND
+     
+     Runs when Contact page opens.
+  ========================================= */
 
-      const data = await response.json();
+  useEffect(() => {
 
-      if (!response.ok || !data.success) {
-        throw new Error(
-          data.message || "Unable to submit enquiry."
+    const wakeBackend = async () => {
+
+      try {
+
+        await fetch(
+          `${BACKEND_URL}/`,
+          {
+            method: "GET",
+            cache: "no-store"
+          }
         );
+
+        console.log(
+          "✅ EduGuide backend is awake."
+        );
+
+      } catch (error) {
+
+        console.log(
+          "Backend wake-up request failed."
+        );
+
       }
 
-      console.log("EduGuide Enquiry Submitted:", enquiry);
+    };
+
+
+    wakeBackend();
+
+  }, []);
+
+
+  /* =========================================
+     FORM SUBMIT
+  ========================================= */
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+
+    setLoading(true);
+
+    setSubmitted(false);
+
+    setError("");
+
+
+    const form =
+      e.currentTarget;
+
+
+    const formData =
+      new FormData(form);
+
+
+    const enquiry = {
+
+      name:
+        formData.get("name"),
+
+      phone:
+        formData.get("phone"),
+
+      email:
+        formData.get("email"),
+
+      country:
+        formData.get("country"),
+
+      academicStatus:
+        formData.get("academicStatus"),
+
+      message:
+        formData.get("message")
+
+    };
+
+
+    /* =====================================
+       REQUEST TIMEOUT
+    ====================================== */
+
+    const controller =
+      new AbortController();
+
+
+    const timeoutId =
+      setTimeout(() => {
+
+        controller.abort();
+
+      }, 15000);
+
+
+    try {
+
+      /* ===================================
+         SEND TO RENDER BACKEND
+      ==================================== */
+
+      const response =
+        await fetch(
+          `${BACKEND_URL}/api/enquiry`,
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                enquiry
+              ),
+
+            signal:
+              controller.signal
+
+          }
+        );
+
+
+      clearTimeout(
+        timeoutId
+      );
+
+
+      /* ===================================
+         RESPONSE
+      ==================================== */
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to submit enquiry."
+        );
+
+      }
+
+
+      /* ===================================
+         SUCCESS
+      ==================================== */
+
+      console.log(
+        "EduGuide Enquiry Submitted:",
+        enquiry
+      );
+
 
       setSubmitted(true);
 
       form.reset();
 
+
+      /* ===================================
+         HIDE SUCCESS MESSAGE
+      ==================================== */
+
       setTimeout(() => {
+
         setSubmitted(false);
+
       }, 5000);
 
+
     } catch (error) {
+
       console.error(
         "Enquiry submission error:",
         error
       );
 
-      setError(
-        "Unable to submit your enquiry right now. Please try again or contact us on WhatsApp."
-      );
+
+      if (
+        error.name ===
+        "AbortError"
+      ) {
+
+        setError(
+          "The server is taking longer than expected. Please try again or contact us on WhatsApp."
+        );
+
+      } else {
+
+        setError(
+          "Unable to submit your enquiry right now. Please try again or contact us on WhatsApp."
+        );
+
+      }
+
 
     } finally {
+
+      clearTimeout(
+        timeoutId
+      );
+
       setLoading(false);
+
     }
+
   };
+
 
   return (
     <>
+
       {/* =========================================
           PAGE HERO
       ========================================== */}
@@ -101,13 +278,15 @@ export default function Contact() {
           <h1>
             Let's Plan Your
             <br />
-            <span>Medical Journey</span>
+            <span>
+              Medical Journey
+            </span>
           </h1>
 
           <p>
             Have questions about MBBS abroad?
-            Talk to our counsellors and get personalised
-            guidance for your next step.
+            Talk to our counsellors and get
+            personalised guidance for your next step.
           </p>
 
         </div>
@@ -125,7 +304,7 @@ export default function Contact() {
 
 
           {/* =====================================
-              CONTACT INFORMATION PANEL
+              CONTACT INFORMATION
           ====================================== */}
 
           <div className="contact-panel">
@@ -137,24 +316,23 @@ export default function Contact() {
             <h2>
               We're Here to
               <br />
-              <span>Help You</span>
+              <span>
+                Help You
+              </span>
             </h2>
 
             <p>
-              Whether you are just exploring your options
-              or ready to start your application, our team
-              is ready to guide you through the next step.
+              Whether you are just exploring your
+              options or ready to start your application,
+              our team is ready to guide you through
+              the next step.
             </p>
 
-
-            {/* =================================
-                CONTACT POINTS
-            ================================== */}
 
             <div className="contact-points">
 
 
-              {/* PHONE / WHATSAPP */}
+              {/* PHONE */}
 
               <a
                 href="tel:+919600784851"
@@ -166,9 +344,15 @@ export default function Contact() {
                 </span>
 
                 <span>
-                  <strong>Phone / WhatsApp</strong>
+
+                  <strong>
+                    Phone / WhatsApp
+                  </strong>
+
                   <br />
+
                   +91 96007 84851
+
                 </span>
 
               </a>
@@ -186,9 +370,15 @@ export default function Contact() {
                 </span>
 
                 <span>
-                  <strong>Email</strong>
+
+                  <strong>
+                    Email
+                  </strong>
+
                   <br />
+
                   eduguideeducationservices@gmail.com
+
                 </span>
 
               </a>
@@ -208,15 +398,28 @@ export default function Contact() {
                 </span>
 
                 <span>
-                  <strong>Office Location</strong>
+
+                  <strong>
+                    Office Location
+                  </strong>
+
                   <br />
+
                   First Floor GKMR Nagar,
+
                   <br />
-                  60 Feet Road, Opposite Dharapuram
+
+                  60 Feet Road,
+                  Opposite Dharapuram
+
                   <br />
+
                   to Tiruppur Road,
+
                   <br />
+
                   Tiruppur - 641608
+
                 </span>
 
                 <ExternalLink
@@ -236,9 +439,16 @@ export default function Contact() {
                 </span>
 
                 <span>
-                  <strong>Working Hours</strong>
+
+                  <strong>
+                    Working Hours
+                  </strong>
+
                   <br />
-                  Mon – Sat, 9:00 AM – 6:00 PM
+
+                  Mon – Sat,
+                  9:00 AM – 6:00 PM
+
                 </span>
 
               </div>
@@ -246,9 +456,7 @@ export default function Contact() {
             </div>
 
 
-            {/* =================================
-                WHATSAPP QUICK BUTTON
-            ================================== */}
+            {/* WHATSAPP */}
 
             <a
               href="https://wa.me/919600784851"
@@ -280,9 +488,7 @@ export default function Contact() {
           >
 
 
-            {/* =================================
-                FORM HEADING
-            ================================== */}
+            {/* FORM HEADING */}
 
             <div className="form-heading">
 
@@ -303,6 +509,7 @@ export default function Contact() {
             ================================== */}
 
             {submitted && (
+
               <div
                 style={{
                   display: "flex",
@@ -310,8 +517,10 @@ export default function Contact() {
                   gap: "10px",
                   padding: "13px 15px",
                   borderRadius: "12px",
-                  background: "rgba(34, 197, 94, 0.08)",
-                  border: "1px solid rgba(34, 197, 94, 0.25)",
+                  background:
+                    "rgba(34, 197, 94, 0.08)",
+                  border:
+                    "1px solid rgba(34, 197, 94, 0.25)",
                   color: "#15803d",
                   fontSize: "13px",
                   fontWeight: "700"
@@ -321,11 +530,15 @@ export default function Contact() {
                 <CheckCircle2 size={17} />
 
                 <span>
-                  Thank you! Your enquiry has been submitted.
-                  Our counsellor will contact you soon.
+
+                  Thank you! Your enquiry has
+                  been submitted. Our counsellor
+                  will contact you soon.
+
                 </span>
 
               </div>
+
             )}
 
 
@@ -334,20 +547,26 @@ export default function Contact() {
             ================================== */}
 
             {error && (
+
               <div
                 style={{
                   padding: "13px 15px",
                   borderRadius: "12px",
-                  background: "rgba(239, 68, 68, 0.08)",
-                  border: "1px solid rgba(239, 68, 68, 0.22)",
+                  background:
+                    "rgba(239, 68, 68, 0.08)",
+                  border:
+                    "1px solid rgba(239, 68, 68, 0.22)",
                   color: "#b91c1c",
                   fontSize: "13px",
                   fontWeight: "600",
                   lineHeight: "1.5"
                 }}
               >
+
                 {error}
+
               </div>
+
             )}
 
 
@@ -358,6 +577,7 @@ export default function Contact() {
             <div className="form-row">
 
               <label>
+
                 Full Name *
 
                 <input
@@ -372,6 +592,7 @@ export default function Contact() {
 
 
               <label>
+
                 Phone Number *
 
                 <input
@@ -396,6 +617,7 @@ export default function Contact() {
             <div className="form-row">
 
               <label>
+
                 Email Address *
 
                 <input
@@ -410,6 +632,7 @@ export default function Contact() {
 
 
               <label>
+
                 Preferred Country *
 
                 <select
@@ -418,7 +641,10 @@ export default function Contact() {
                   required
                 >
 
-                  <option value="" disabled>
+                  <option
+                    value=""
+                    disabled
+                  >
                     Select country
                   </option>
 
@@ -458,6 +684,7 @@ export default function Contact() {
             ================================== */}
 
             <label>
+
               Current Academic Status *
 
               <select
@@ -466,7 +693,10 @@ export default function Contact() {
                 required
               >
 
-                <option value="" disabled>
+                <option
+                  value=""
+                  disabled
+                >
                   Select your current status
                 </option>
 
@@ -508,6 +738,7 @@ export default function Contact() {
             ================================== */}
 
             <label>
+
               Message
 
               <textarea
@@ -557,18 +788,25 @@ export default function Contact() {
               className="btn primary"
               disabled={loading}
               style={{
-                opacity: loading ? 0.7 : 1,
-                cursor: loading
-                  ? "not-allowed"
-                  : "pointer"
+                opacity:
+                  loading
+                    ? 0.7
+                    : 1,
+
+                cursor:
+                  loading
+                    ? "not-allowed"
+                    : "pointer"
               }}
             >
 
               <span>
+
                 {loading
                   ? "Submitting..."
                   : "Send Enquiry"
                 }
+
               </span>
 
               {!loading && (
@@ -582,6 +820,7 @@ export default function Contact() {
         </div>
 
       </section>
+
     </>
   );
 }

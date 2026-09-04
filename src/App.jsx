@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar/Navbar";
@@ -12,85 +11,117 @@ import Countries from "./pages/Countries/Countries";
 import Admission from "./pages/Admission/Admission";
 import Contact from "./pages/Contact/Contact";
 
+import AdminLogin from "./admin/AdminLogin";
+import AdminDashboard from "./admin/AdminDashboard";
+
 import "./styles/variables.css";
 import "./styles/global.css";
 import "./styles/responsive.css";
+
+function PublicLayout({ children }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
 
-      {/* =========================
-          SCROLL TO TOP
-          Automatically scrolls to
-          top whenever route changes
-      ========================= */}
       <ScrollToTop />
 
-      {/* =========================
-          NAVBAR
-      ========================= */}
-      <Navbar />
-
-      {/* =========================
-          PAGE ROUTES
-      ========================= */}
       <Routes>
 
         {/* =========================
-            HOME
+            PUBLIC WEBSITE
         ========================= */}
+
         <Route
           path="/"
-          element={<Home />}
+          element={
+            <PublicLayout>
+              <Home />
+            </PublicLayout>
+          }
         />
 
-        {/* =========================
-            ABOUT
-        ========================= */}
         <Route
           path="/about"
-          element={<About />}
+          element={
+            <PublicLayout>
+              <About />
+            </PublicLayout>
+          }
         />
 
-        {/* =========================
-            COUNTRIES
-        ========================= */}
         <Route
           path="/countries"
-          element={<Countries />}
+          element={
+            <PublicLayout>
+              <Countries />
+            </PublicLayout>
+          }
         />
 
-        {/* =========================
-            SERVICES
-        ========================= */}
         <Route
           path="/services"
-          element={<Services />}
+          element={
+            <PublicLayout>
+              <Services />
+            </PublicLayout>
+          }
         />
 
-        {/* =========================
-            ADMISSION
-        ========================= */}
         <Route
           path="/admission"
-          element={<Admission />}
+          element={
+            <PublicLayout>
+              <Admission />
+            </PublicLayout>
+          }
+        />
+
+        <Route
+          path="/contact"
+          element={
+            <PublicLayout>
+              <Contact />
+            </PublicLayout>
+          }
         />
 
         {/* =========================
-            CONTACT
+            ADMIN PANEL
         ========================= */}
+
         <Route
-          path="/contact"
-          element={<Contact />}
+          path="/admin/login"
+          element={<AdminLogin />}
+        />
+
+        <Route
+          path="/admin/dashboard"
+          element={<AdminDashboard />}
+        />
+
+        {/* =========================
+            FALLBACK
+        ========================= */}
+
+        <Route
+          path="*"
+          element={
+            <PublicLayout>
+              <Home />
+            </PublicLayout>
+          }
         />
 
       </Routes>
-
-      {/* =========================
-          FOOTER
-      ========================= */}
-      <Footer />
 
     </BrowserRouter>
   );
